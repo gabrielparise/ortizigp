@@ -1,0 +1,1102 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iGP Backoffice - Detalhe da Jogada</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f1730;
+      --panel-2:#111c3a;
+      --border:rgba(255,255,255,.08);
+      --text:#e7ecff;
+      --muted:rgba(231,236,255,.65);
+      --muted-2:rgba(231,236,255,.45);
+      --green:#2ee59d;
+      --yellow:#ffd34d;
+      --red:#ff4d6d;
+      --natural:#22c55e;
+      --extra:#2563eb;
+      --radius:16px;
+      --shadow-soft: 0 10px 22px rgba(0,0,0,.25);
+      --font-ui: "Inter", "Segoe UI Variable Text", "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body.light-theme{
+      --bg:#e9f0ff;
+      --panel:#ffffff;
+      --panel-2:#f1f6ff;
+      --border:rgba(15,23,42,.18);
+      --text:#0b1530;
+      --muted:rgba(11,21,48,.80);
+      --muted-2:rgba(11,21,48,.62);
+      --shadow-soft: 0 10px 24px rgba(15,23,42,.11);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font-ui);
+      font-size:15px;
+      line-height:1.45;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.18), transparent 60%),
+        linear-gradient(180deg, #070a14, var(--bg) 40%, #070a14);
+      min-height:100vh;
+    }
+    body.light-theme{
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.16), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.14), transparent 60%),
+        linear-gradient(180deg, #f9fbff, var(--bg) 40%, #e4ecff);
+    }
+    body.light-theme .sidebar{
+      background: linear-gradient(180deg, #f5f8ff, #edf3ff);
+    }
+    body.light-theme .nav a:hover{
+      background: rgba(59,88,152,.10);
+      border-color: rgba(59,88,152,.20);
+    }
+    body.light-theme .nav a.active{
+      background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(245,200,76,.18));
+      border-color: rgba(82,60,188,.30);
+    }
+    body.light-theme .badge{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(15,23,42,.06);
+    }
+    body.light-theme .btn,
+    body.light-theme .select,
+    body.light-theme .input{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(255,255,255,.92);
+    }
+    body.light-theme .card,
+    body.light-theme .detail-item,
+    body.light-theme .balls-list,
+    body.light-theme .formula{
+      background: rgba(255,255,255,.90);
+      border-color: rgba(15,23,42,.18);
+    }
+    body.light-theme .report-wrap{
+      background: rgba(255,255,255,.90);
+      border-color: rgba(15,23,42,.18);
+    }
+    body.light-theme .report-table th{
+      background:#e8edf7;
+      color:#10223f;
+      border-bottom-color: rgba(15,23,42,.20);
+    }
+    body.light-theme .report-table td{
+      border-bottom-color: rgba(15,23,42,.12);
+      border-right-color: rgba(15,23,42,.10);
+    }
+    body.light-theme .report-row-offered{
+      background: rgba(245,200,76,.20);
+    }
+    body.light-theme .report-row-extra{
+      background: rgba(37,99,235,.16);
+    }
+    body.light-theme .cartela{
+      background: #fff;
+      border-color: rgba(15,23,42,.18);
+    }
+    body.light-theme .cell{
+      border-color: rgba(15,23,42,.24);
+      background: rgba(15,23,42,.03);
+    }
+
+    .app{display:grid;grid-template-columns:1fr;min-height:100vh}
+    .sidebar{
+      border-right:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,23,48,.85), rgba(15,23,48,.65));
+      padding:20px 16px;
+      position:fixed;
+      left:0;
+      top:0;
+      width:280px;
+      height:100vh;
+      overflow:auto;
+      z-index:40;
+      transform: translateX(calc(-100% + 18px));
+      transition: transform .2s ease;
+    }
+    body.sidebar-open .sidebar{ transform: translateX(0); }
+    .sidebar-reveal{
+      position:fixed;
+      left:0;
+      top:50%;
+      transform:translateY(-50%);
+      width:20px;
+      height:96px;
+      border:1px solid var(--border);
+      border-left:none;
+      border-radius:0 10px 10px 0;
+      background: rgba(255,255,255,.08);
+      color:var(--text);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      z-index:45;
+      backdrop-filter: blur(6px);
+      font-size:12px;
+      user-select:none;
+    }
+    body.light-theme .sidebar-reveal{
+      background: rgba(15,23,42,.10);
+      border-color: rgba(15,23,42,.20);
+    }
+    .brand{display:flex;align-items:center;gap:12px;padding:10px 10px 16px;margin-bottom:10px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(245,200,76,.85), transparent 70%),
+        radial-gradient(18px 18px at 70% 70%, rgba(122,92,255,.75), transparent 70%),
+        linear-gradient(135deg, rgba(245,200,76,.15), rgba(122,92,255,.2));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow-soft);
+    }
+    .brand h1{font-size:14px;margin:0}
+    .brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+    .nav{display:flex;flex-direction:column;gap:6px;padding:10px}
+    .nav a{
+      text-decoration:none;color:var(--muted);padding:10px;border-radius:12px;border:1px solid transparent;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;transition:.18s ease;
+    }
+    .nav a:hover{background: rgba(255,255,255,.04);border-color: rgba(255,255,255,.08);color:var(--text)}
+    .nav a.active{background: linear-gradient(135deg, rgba(122,92,255,.22), rgba(245,200,76,.10));border-color: rgba(122,92,255,.28);color:var(--text)}
+    .badge{font-size:12px;color:var(--text);padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05)}
+    .brand h1,
+    .badge,
+    .metric .val,
+    .kpi .val,
+    td strong,
+    .status,
+    .delta,
+    .pill,
+    .tag{
+      font-family:var(--font-mono);
+    }
+
+    .main{padding:20px;padding-left:36px}
+
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .title h2{margin:0 0 4px;font-size:24px}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn,.select,.input{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none;
+      font-size:12px;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn.theme-toggle{
+      width:44px;
+      height:44px;
+      padding:0;
+    }
+    .btn.theme-toggle svg{
+      width:22px;
+      height:22px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.8;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,28,58,.85), rgba(15,23,48,.65));
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+      position:relative;
+      padding:14px;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px -1px auto -1px;
+      height:2px;
+      background: linear-gradient(90deg, rgba(122,92,255,.7), rgba(245,200,76,.6), rgba(46,229,157,.55));
+      opacity:.65;
+    }
+    .header-line{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;
+      border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05);
+    }
+    .pill.ok{color:var(--green);border-color:rgba(46,229,157,.25);background:rgba(46,229,157,.08)}
+    .pill.timeout{color:var(--red);border-color:rgba(255,77,109,.28);background:rgba(255,77,109,.08)}
+
+    .layout{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
+    .details-grid{display:grid;grid-template-columns:repeat(3,minmax(180px,1fr));gap:10px}
+    .detail-item{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      padding:10px 12px;
+    }
+    .detail-item .k{font-size:11px;color:var(--muted)}
+    .detail-item .v{margin-top:4px;font-size:13px;color:var(--text);font-weight:600}
+    .formula{
+      margin-top:10px;
+      border:1px dashed rgba(255,255,255,.20);
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      padding:10px 12px;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .formula strong{color:var(--text)}
+
+    .legend{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}
+    .legend .tag{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;
+      border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04)
+    }
+    .dot{width:10px;height:10px;border-radius:99px;display:inline-block}
+    .dot.natural{background:var(--natural)}
+    .dot.extra{background:var(--extra)}
+
+    .balls-list{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      padding:10px;
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      min-height:42px;
+    }
+    .ball{
+      width:28px;height:28px;border-radius:99px;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;
+      border:1px solid rgba(255,255,255,.18);
+      color:var(--text);
+      background:rgba(255,255,255,.06);
+    }
+    .ball.natural{background:rgba(34,197,94,.20);border-color:rgba(34,197,94,.48)}
+    .ball.extra{background:rgba(37,99,235,.22);border-color:rgba(37,99,235,.52)}
+
+    .cartelas-grid{display:grid;grid-template-columns:repeat(2,minmax(260px,1fr));gap:12px}
+    .cartela{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      background:rgba(255,255,255,.02);
+      padding:10px;
+    }
+    .cartela h4{margin:0 0 8px;font-size:12px}
+    .cartela-board{
+      display:grid;
+      grid-template-columns:repeat(5,1fr);
+      gap:6px;
+    }
+    .cell{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:10px;
+      min-height:34px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:12px;
+      color:var(--text);
+      background:rgba(255,255,255,.03);
+      font-weight:600;
+    }
+    .cell.marked-natural{
+      background:rgba(34,197,94,.20);
+      border-color:rgba(34,197,94,.52);
+      box-shadow: inset 0 0 0 1px rgba(34,197,94,.30);
+    }
+    .cell.marked-extra{
+      background:rgba(37,99,235,.24);
+      border-color:rgba(37,99,235,.55);
+      box-shadow: inset 0 0 0 1px rgba(37,99,235,.34);
+    }
+
+    .report-wrap{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+    .report-toolbar{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      padding:10px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      flex-wrap:wrap;
+    }
+    .report-toolbar .left,
+    .report-toolbar .right{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .report-toolbar .small-select{
+      min-width:76px;
+      padding:7px 8px;
+      border-radius:10px;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+    }
+    .report-toolbar .small-input{
+      min-width:210px;
+      padding:7px 9px;
+      border-radius:10px;
+      font-size:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+    }
+    .report-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      font-size:13px;
+    }
+    .report-table th{
+      background:#2d3643;
+      color:#f2f5fb;
+      text-transform:uppercase;
+      font-weight:700;
+      letter-spacing:.2px;
+      padding:11px 8px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      text-align:center;
+    }
+    .report-table td{
+      padding:10px 8px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      border-right:1px solid rgba(255,255,255,.06);
+      text-align:center;
+      color:var(--text);
+      vertical-align:top;
+    }
+    .report-table th:last-child,
+    .report-table td:last-child{
+      border-right:none;
+    }
+    .report-row-offered{
+      background: rgba(245,200,76,.14);
+    }
+    .report-row-extra{
+      background: rgba(37,99,235,.16);
+    }
+    .mark-ok{color:#22c55e;font-weight:700}
+    .mark-no{color:#ff6b6b;font-weight:700}
+    .report-footer{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 12px;
+      gap:10px;
+      flex-wrap:wrap;
+      font-size:13px;
+      color:var(--muted);
+    }
+    .pages{
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .page-btn{
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(255,255,255,.04);
+      color:var(--text);
+      min-width:30px;
+      height:30px;
+      border-radius:999px;
+      font-size:12px;
+      cursor:pointer;
+      padding:0 8px;
+    }
+    .page-btn.active{
+      background:rgba(37,99,235,.30);
+      border-color:rgba(37,99,235,.55);
+    }
+    .page-btn:disabled{
+      opacity:.45;
+      cursor:not-allowed;
+    }
+
+    @media (max-width:1200px){
+      .layout{grid-template-columns:1fr}
+      .details-grid{grid-template-columns:1fr 1fr}
+    }
+    @media (max-width:860px){
+      .app{grid-template-columns:1fr}
+      .sidebar{
+        position:relative;
+        width:auto;
+        height:auto;
+        transform:none;
+      }
+      .sidebar-reveal{display:none}
+      .cartelas-grid{grid-template-columns:1fr}
+      .details-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visao Operacao + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a class="active" href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="#"><span>Games</span><span class="badge">842</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Detalhe da Jogada</h2>
+          <p>Visualizacao completa da rodada com marcacao de bolas naturais e extras.</p>
+        </div>
+        <div class="actions">
+          <a class="btn" href="player-details.html">Voltar para Player</a>
+          <select id="roundSelect" class="select" aria-label="Rodada">
+            <option value="RND-884088" selected>RND-884088 (Bingo)</option>
+            <option value="RND-993501">RND-993501 (Slots)</option>
+          </select>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+
+      <section class="card" style="margin-bottom:14px;">
+        <div class="header-line">
+          <div>
+            <div style="font-size:12px;color:var(--muted)">Round ID</div>
+            <div id="roundId" style="font-size:20px;font-weight:700">-</div>
+          </div>
+          <div id="roundStatus" class="pill ok">Encerrada naturalmente</div>
+        </div>
+      </section>
+
+      <section class="layout">
+        <article class="card">
+          <h3 style="margin:0 0 10px;font-size:14px;">Informacoes da jogada</h3>
+          <div class="details-grid">
+            <div class="detail-item"><div class="k">Identificacao do jogador</div><div class="v" id="playerRef">-</div></div>
+            <div class="detail-item"><div class="k">Jogo</div><div class="v" id="gameName">-</div></div>
+            <div class="detail-item"><div class="k">Inicio da jogada</div><div class="v" id="startAt">-</div></div>
+            <div class="detail-item"><div class="k">Termino da jogada</div><div class="v" id="endAt">-</div></div>
+            <div class="detail-item"><div class="k">Saldo inicial</div><div class="v" id="balanceBefore">-</div></div>
+            <div class="detail-item"><div class="k">Saldo final</div><div class="v" id="balanceAfter">-</div></div>
+            <div class="detail-item"><div class="k">Aposta base</div><div class="v" id="baseBet">-</div></div>
+            <div class="detail-item"><div class="k">Denominacao jogada</div><div class="v" id="denomination">-</div></div>
+            <div class="detail-item" id="cardsQtyItem"><div class="k">Quantidade de cartelas</div><div class="v" id="cardsQty">-</div></div>
+            <div class="detail-item"><div class="k">Montante total apostado</div><div class="v" id="totalBet">-</div></div>
+            <div class="detail-item"><div class="k">Total ganho</div><div class="v" id="totalWin">-</div></div>
+            <div class="detail-item"><div class="k">Ganho em bonus</div><div class="v" id="bonusWin">-</div></div>
+            <div class="detail-item"><div class="k">Ganho no Jackpot</div><div class="v" id="jackpotWin">-</div></div>
+            <div class="detail-item"><div class="k">Bola extra ofertada</div><div class="v" id="extraOffered">-</div></div>
+            <div class="detail-item"><div class="k">Quantidade de bolas extras compradas</div><div class="v" id="extraBought">-</div></div>
+            <div class="detail-item"><div class="k">Valor gasto em bolas extras</div><div class="v" id="extraSpent">-</div></div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 style="margin:0 0 10px;font-size:14px;">Informacoes da sessao</h3>
+          <div class="details-grid">
+            <div class="detail-item"><div class="k">Endereco IP</div><div class="v" id="sessionIp">-</div></div>
+            <div class="detail-item"><div class="k">Operador</div><div class="v" id="sessionOperator">-</div></div>
+            <div class="detail-item"><div class="k">Nome do Cassino</div><div class="v" id="sessionCasino">-</div></div>
+            <div class="detail-item"><div class="k">Inicio da Sessao</div><div class="v" id="sessionStart">-</div></div>
+            <div class="detail-item"><div class="k">Final da Sessao</div><div class="v" id="sessionEnd">-</div></div>
+            <div class="detail-item"><div class="k">Moeda Jogada</div><div class="v" id="sessionCurrency">-</div></div>
+            <div class="detail-item"><div class="k">Saldo Inicial</div><div class="v" id="sessionStartBalance">-</div></div>
+            <div class="detail-item"><div class="k">Saldo Final</div><div class="v" id="sessionEndBalance">-</div></div>
+            <div class="detail-item"><div class="k">Total Jogado</div><div class="v" id="sessionTotalPlayed">-</div></div>
+            <div class="detail-item"><div class="k">Total Ganho</div><div class="v" id="sessionTotalWon">-</div></div>
+            <div class="detail-item"><div class="k">Sessao Mobile</div><div class="v" id="sessionMobile">-</div></div>
+            <div class="detail-item" style="grid-column:1 / -1;"><div class="k">User Agent</div><div class="v" id="sessionUserAgent" style="font-size:12px;word-break:break-word;">-</div></div>
+          </div>
+        </article>
+      </section>
+
+      <section class="card" style="margin-top:14px;">
+        <h3 style="margin:0 0 10px;font-size:14px;">Bolas sorteadas</h3>
+        <div class="legend">
+          <span class="tag"><span class="dot natural"></span>Bolas naturais</span>
+          <span class="tag"><span class="dot extra"></span>Bolas extras</span>
+        </div>
+        <div class="balls-list" id="ballsList"></div>
+        <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+          Status da jogada: <strong id="statusText" style="color:var(--text)">-</strong>
+        </div>
+      </section>
+
+      <section class="card" id="bingoSection" style="margin-top:14px;">
+        <h3 style="margin:0 0 10px;font-size:14px;">Desenho das cartelas</h3>
+        <p style="margin:0 0 12px;font-size:12px;color:var(--muted)">
+          Marcacao em <strong style="color:var(--natural)">verde</strong> para bolas naturais e em
+          <strong style="color:var(--extra)">azul</strong> para bolas extras.
+        </p>
+        <div class="cartelas-grid" id="cartelasGrid"></div>
+      </section>
+
+      <section class="card" id="ballsReportSection" style="margin-top:14px;">
+        <h3 style="margin:0 0 10px;font-size:14px;">Relatorio detalhado das bolas</h3>
+        <div class="report-wrap">
+          <div class="report-toolbar">
+            <div class="left">
+              <select id="reportPageSize" class="small-select" aria-label="Resultados por pagina">
+                <option value="10" selected>10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </select>
+              <span>resultados por pagina</span>
+            </div>
+            <div class="right">
+              <label for="reportSearch">Pesquisar</label>
+              <input id="reportSearch" class="small-input" type="text" placeholder="Numero, premio ou quase premio" />
+            </div>
+          </div>
+
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Numero</th>
+                <th>Ordem</th>
+                <th>Joker</th>
+                <th>Ofertadas proximo</th>
+                <th>Custo proximo</th>
+                <th>Total prizes</th>
+                <th>Prizes (IDs)</th>
+                <th>Quase prizes (IDs)</th>
+              </tr>
+            </thead>
+            <tbody id="reportBody"></tbody>
+          </table>
+
+          <div class="report-footer">
+            <div id="reportInfo">Mostrando 0 resultados</div>
+            <div class="pages">
+              <button class="page-btn" id="pageFirst">Primeiro</button>
+              <button class="page-btn" id="pagePrev">Anterior</button>
+              <div id="reportPages" class="pages"></div>
+              <button class="page-btn" id="pageNext">Proximo</button>
+              <button class="page-btn" id="pageLast">Ultimo</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    const rounds = {
+      "RND-884088": {
+        roundId: "RND-884088",
+        playerId: "PLR-12007",
+        playerName: "Julia Nunes",
+        game: "Bingo Show Ball 75",
+        gameType: "bingo",
+        status: "natural",
+        startAt: "2026-03-05 11:54:02",
+        endAt: "2026-03-05 11:57:46",
+        balanceBefore: 3284.00,
+        balanceAfter: 3494.00,
+        baseBet: 2.00,
+        denomination: 0.50,
+        cardsQty: 3,
+        totalWin: 310.00,
+        bonusWin: 70.00,
+        jackpotWin: 0.00,
+        extraBallOffered: true,
+        extraBallsBought: 6,
+        extraBallsSpent: 57.00,
+        naturalBalls: [5, 9, 13, 18, 21, 22, 25, 30, 31, 34, 35, 40, 42, 44, 46, 47, 48, 50, 52, 55, 58, 61, 62, 64, 68, 69, 70, 71, 72, 74],
+        extraBalls: [19, 73, 33, 57, 10, 63],
+        session: {
+          ip: "179.102.55.28",
+          operator: "Operadora C",
+          casinoName: "Casino C Prime",
+          start: "2026-03-05 11:12:08",
+          end: "2026-03-05 12:03:41",
+          currency: "BRL",
+          startBalance: 3000.00,
+          endBalance: 3494.00,
+          totalPlayed: 842.00,
+          totalWon: 1336.00,
+          isMobile: true,
+          userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.3 Mobile/15E148 Safari/604.1"
+        },
+        cards: [
+          [
+            [5, 18, 30, 46, 71],
+            [9, 22, 34, 55, 68],
+            [7, 19, 33, 58, 73]
+          ],
+          [
+            [2, 13, 25, 44, 69],
+            [8, 17, 35, 48, 61],
+            [4, 20, 31, 47, 64]
+          ],
+          [
+            [1, 16, 29, 43, 70],
+            [11, 26, 38, 50, 65],
+            [19, 32, 45, 59, 73]
+          ]
+        ]
+      },
+      "RND-993501": {
+        roundId: "RND-993501",
+        playerId: "PLR-11744",
+        playerName: "Marcio Lima",
+        game: "Fortune Tiger",
+        gameType: "slots",
+        status: "timeout",
+        startAt: "2026-03-05 14:11:09",
+        endAt: "2026-03-05 14:11:41",
+        balanceBefore: 1810.00,
+        balanceAfter: 1792.00,
+        baseBet: 4.00,
+        denomination: 1.00,
+        cardsQty: null,
+        totalWin: 0.00,
+        bonusWin: 0.00,
+        jackpotWin: 0.00,
+        extraBallOffered: false,
+        extraBallsBought: 0,
+        extraBallsSpent: 0.00,
+        naturalBalls: [],
+        extraBalls: [],
+        session: {
+          ip: "177.91.12.88",
+          operator: "Operadora B",
+          casinoName: "Lucky B Casino",
+          start: "2026-03-05 14:01:22",
+          end: "2026-03-05 14:17:09",
+          currency: "BRL",
+          startBalance: 1900.00,
+          endBalance: 1792.00,
+          totalPlayed: 240.00,
+          totalWon: 132.00,
+          isMobile: false,
+          userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36"
+        },
+        cards: []
+      }
+    };
+
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const roundSelect = document.getElementById("roundSelect");
+    const reportPageSize = document.getElementById("reportPageSize");
+    const reportSearch = document.getElementById("reportSearch");
+    const reportBody = document.getElementById("reportBody");
+    const reportInfo = document.getElementById("reportInfo");
+    const reportPages = document.getElementById("reportPages");
+    const pageFirst = document.getElementById("pageFirst");
+    const pagePrev = document.getElementById("pagePrev");
+    const pageNext = document.getElementById("pageNext");
+    const pageLast = document.getElementById("pageLast");
+    const ballsReportSection = document.getElementById("ballsReportSection");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+
+    const reportState = {
+      rows: [],
+      filteredRows: [],
+      page: 1,
+      pageSize: 10,
+      search: ""
+    };
+    const NATURAL_BALLS_LIMIT = 30;
+    const EXTRA_BALLS_LIMIT = 10;
+    const EXTRA_BALL_COSTS = [3, 5, 7, 10, 14, 18, 23, 29, 36, 45];
+    let sidebarCloseTimer = null;
+
+    function formatMoney(v) {
+      return v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+    }
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      setTheme(localStorage.getItem(THEME_KEY) || "dark");
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      sidebarReveal.textContent = "❮";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        sidebarReveal.textContent = "❯";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "❯";
+        }
+      });
+    }
+
+    function renderBalls(container, naturalBalls, extraBalls) {
+      container.innerHTML = "";
+      naturalBalls.forEach((n) => {
+        const el = document.createElement("span");
+        el.className = "ball natural";
+        el.textContent = n;
+        container.appendChild(el);
+      });
+      extraBalls.forEach((n) => {
+        const el = document.createElement("span");
+        el.className = "ball extra";
+        el.textContent = n;
+        container.appendChild(el);
+      });
+      if (!naturalBalls.length && !extraBalls.length) {
+        container.innerHTML = '<span style="font-size:12px;color:var(--muted)">Jogo sem sorteio de bolas.</span>';
+      }
+    }
+
+    function renderCartelas(round) {
+      const section = document.getElementById("bingoSection");
+      const grid = document.getElementById("cartelasGrid");
+      grid.innerHTML = "";
+
+      if (round.gameType !== "bingo") {
+        section.style.display = "none";
+        return;
+      }
+      section.style.display = "";
+
+      const naturalSet = new Set(round.naturalBalls);
+      const extraSet = new Set(round.extraBalls);
+
+      round.cards.forEach((card, idx) => {
+        const wrap = document.createElement("article");
+        wrap.className = "cartela";
+        wrap.innerHTML = '<h4>Cartela ' + (idx + 1) + "</h4>";
+
+        const board = document.createElement("div");
+        board.className = "cartela-board";
+
+        card.flat().forEach((num) => {
+          const cell = document.createElement("div");
+          let cls = "cell";
+          if (extraSet.has(num)) cls += " marked-extra";
+          else if (naturalSet.has(num)) cls += " marked-natural";
+          cell.className = cls;
+          cell.textContent = num;
+          board.appendChild(cell);
+        });
+
+        wrap.appendChild(board);
+        grid.appendChild(wrap);
+      });
+    }
+
+    function getCardProgress(card, drawnSet) {
+      const rowHits = card.map((row) => row.filter((n) => drawnSet.has(n)).length);
+      const rowLen = card[0]?.length || 5;
+      const won = rowHits.some((hits) => hits === rowLen);
+      const near = !won && rowHits.some((hits) => hits === rowLen - 1);
+      const maxHits = Math.max(...rowHits);
+      return { won, near, maxHits };
+    }
+
+    function buildBallsReportRows(round) {
+      if (round.gameType !== "bingo") return [];
+      const sequence = [
+        ...round.naturalBalls.map((num) => ({ num, type: "natural" })),
+        ...round.extraBalls.map((num) => ({ num, type: "extra" }))
+      ];
+      const drawnSet = new Set();
+      const rows = [];
+      const total = sequence.length;
+
+      sequence.forEach((item, idx) => {
+        drawnSet.add(item.num);
+        const order = total - idx;
+        const naturalEndIdx = NATURAL_BALLS_LIMIT - 1;
+        const extraIdx = idx - NATURAL_BALLS_LIMIT;
+        const offeredNext = round.extraBallOffered && (
+          idx === naturalEndIdx ||
+          (idx >= NATURAL_BALLS_LIMIT && extraIdx < EXTRA_BALLS_LIMIT - 1)
+        );
+        const nextCost = offeredNext
+          ? (idx === naturalEndIdx ? EXTRA_BALL_COSTS[0] : (EXTRA_BALL_COSTS[extraIdx + 1] || 0))
+          : 0;
+
+        const wonCards = [];
+        const nearCards = [];
+        round.cards.forEach((card, cardIdx) => {
+          const progress = getCardProgress(card, drawnSet);
+          if (progress.won) wonCards.push("Cart " + (cardIdx + 1));
+          else if (progress.near) nearCards.push("Cart " + (cardIdx + 1) + " (" + progress.maxHits + "/5)");
+        });
+
+        rows.push({
+          number: item.num,
+          type: item.type,
+          order,
+          joker: false,
+          offeredNext,
+          nextCost,
+          totalPrizes: wonCards.length,
+          prizeIds: wonCards.length ? wonCards.join(", ") : "-",
+          nearPrizeIds: nearCards.length ? nearCards.join(", ") : "-"
+        });
+      });
+      return rows;
+    }
+
+    function applyReportFilterAndRender() {
+      const term = reportState.search.trim().toLowerCase();
+      reportState.filteredRows = reportState.rows.filter((row) => {
+        if (!term) return true;
+        const text = [
+          String(row.number),
+          String(row.order),
+          row.prizeIds,
+          row.nearPrizeIds
+        ].join(" ").toLowerCase();
+        return text.includes(term);
+      });
+
+      const totalRows = reportState.filteredRows.length;
+      const totalPages = Math.max(1, Math.ceil(totalRows / reportState.pageSize));
+      if (reportState.page > totalPages) reportState.page = totalPages;
+      if (reportState.page < 1) reportState.page = 1;
+
+      const start = (reportState.page - 1) * reportState.pageSize;
+      const end = start + reportState.pageSize;
+      const pageRows = reportState.filteredRows.slice(start, end);
+
+      reportBody.innerHTML = pageRows.map((row) => (
+        '<tr class="' + [row.type === "extra" ? "report-row-extra" : "", row.offeredNext ? "report-row-offered" : ""].filter(Boolean).join(" ") + '">' +
+          "<td><strong>" + row.number + "</strong></td>" +
+          "<td><strong>" + row.order + "</strong></td>" +
+          '<td class="' + (row.joker ? "mark-ok" : "mark-no") + '">' + (row.joker ? "&#10003;" : "&#10005;") + "</td>" +
+          '<td class="' + (row.offeredNext ? "mark-ok" : "mark-no") + '">' + (row.offeredNext ? "&#10003;" : "&#10005;") + "</td>" +
+          "<td>" + (row.nextCost > 0 ? row.nextCost : "-") + "</td>" +
+          "<td>" + row.totalPrizes + "</td>" +
+          "<td>" + row.prizeIds + "</td>" +
+          "<td>" + row.nearPrizeIds + "</td>" +
+        "</tr>"
+      )).join("");
+
+      if (!pageRows.length) {
+        reportBody.innerHTML = '<tr><td colspan="8" style="padding:18px;color:var(--muted)">Nenhum resultado encontrado.</td></tr>';
+      }
+
+      const shownFrom = totalRows === 0 ? 0 : start + 1;
+      const shownTo = Math.min(end, totalRows);
+      reportInfo.textContent = "Mostrando de " + shownFrom + " ate " + shownTo + " de " + totalRows + " registros";
+
+      pageFirst.disabled = reportState.page <= 1;
+      pagePrev.disabled = reportState.page <= 1;
+      pageNext.disabled = reportState.page >= totalPages;
+      pageLast.disabled = reportState.page >= totalPages;
+
+      const pageButtons = [];
+      const first = Math.max(1, reportState.page - 1);
+      const last = Math.min(totalPages, reportState.page + 1);
+      for (let p = first; p <= last; p++) {
+        pageButtons.push(
+          '<button class="page-btn ' + (p === reportState.page ? "active" : "") + '" data-page="' + p + '">' + p + "</button>"
+        );
+      }
+      reportPages.innerHTML = pageButtons.join("");
+      Array.from(reportPages.querySelectorAll("[data-page]")).forEach((btn) => {
+        btn.addEventListener("click", () => {
+          reportState.page = Number(btn.getAttribute("data-page"));
+          applyReportFilterAndRender();
+        });
+      });
+    }
+
+    function renderBallsReport(round) {
+      if (round.gameType !== "bingo") {
+        ballsReportSection.style.display = "none";
+        return;
+      }
+      ballsReportSection.style.display = "";
+      reportState.rows = buildBallsReportRows(round);
+      reportState.page = 1;
+      applyReportFilterAndRender();
+    }
+
+    function renderRound(roundId) {
+      const round = rounds[roundId];
+      if (!round) return;
+      const viewRound = {
+        ...round,
+        naturalBalls: round.naturalBalls.slice(0, NATURAL_BALLS_LIMIT),
+        extraBalls: round.extraBalls.slice(0, EXTRA_BALLS_LIMIT)
+      };
+      viewRound.extraBallsBought = Math.min(viewRound.extraBalls.length, EXTRA_BALLS_LIMIT, round.extraBallsBought);
+
+      const totalBet = viewRound.baseBet * viewRound.denomination * (viewRound.gameType === "bingo" ? viewRound.cardsQty : 1);
+      const statusNatural = viewRound.status === "natural";
+
+      document.getElementById("roundId").textContent = viewRound.roundId;
+      document.getElementById("playerRef").textContent = viewRound.playerId + " / " + viewRound.playerName;
+      document.getElementById("gameName").textContent = viewRound.game;
+      document.getElementById("startAt").textContent = viewRound.startAt;
+      document.getElementById("endAt").textContent = viewRound.endAt;
+      document.getElementById("balanceBefore").textContent = formatMoney(viewRound.balanceBefore);
+      document.getElementById("balanceAfter").textContent = formatMoney(viewRound.balanceAfter);
+      document.getElementById("baseBet").textContent = formatMoney(viewRound.baseBet);
+      document.getElementById("denomination").textContent = formatMoney(viewRound.denomination);
+      document.getElementById("totalBet").textContent = formatMoney(totalBet);
+      document.getElementById("totalWin").textContent = formatMoney(viewRound.totalWin);
+      document.getElementById("bonusWin").textContent = formatMoney(viewRound.bonusWin);
+      document.getElementById("jackpotWin").textContent = formatMoney(viewRound.jackpotWin);
+      document.getElementById("extraOffered").textContent = viewRound.extraBallOffered ? "Sim" : "Nao";
+      document.getElementById("extraBought").textContent = String(viewRound.extraBallsBought);
+      document.getElementById("extraSpent").textContent = formatMoney(viewRound.extraBallsSpent);
+      document.getElementById("sessionIp").textContent = viewRound.session?.ip || "-";
+      document.getElementById("sessionOperator").textContent = viewRound.session?.operator || "-";
+      document.getElementById("sessionCasino").textContent = viewRound.session?.casinoName || "-";
+      document.getElementById("sessionStart").textContent = viewRound.session?.start || "-";
+      document.getElementById("sessionEnd").textContent = viewRound.session?.end || "-";
+      document.getElementById("sessionCurrency").textContent = viewRound.session?.currency || "-";
+      document.getElementById("sessionStartBalance").textContent = formatMoney(viewRound.session?.startBalance || 0);
+      document.getElementById("sessionEndBalance").textContent = formatMoney(viewRound.session?.endBalance || 0);
+      document.getElementById("sessionTotalPlayed").textContent = formatMoney(viewRound.session?.totalPlayed || 0);
+      document.getElementById("sessionTotalWon").textContent = formatMoney(viewRound.session?.totalWon || 0);
+      document.getElementById("sessionMobile").textContent = viewRound.session?.isMobile ? "Sim" : "Nao";
+      document.getElementById("sessionUserAgent").textContent = viewRound.session?.userAgent || "-";
+
+      const cardsQtyItem = document.getElementById("cardsQtyItem");
+      if (viewRound.gameType === "bingo") {
+        cardsQtyItem.style.display = "";
+        document.getElementById("cardsQty").textContent = String(viewRound.cardsQty);
+      } else {
+        cardsQtyItem.style.display = "none";
+      }
+
+      const statusEl = document.getElementById("roundStatus");
+      statusEl.className = "pill " + (statusNatural ? "ok" : "timeout");
+      statusEl.textContent = statusNatural ? "Encerrada naturalmente" : "Encerrada por timeout";
+      document.getElementById("statusText").textContent = statusNatural ? "Encerrada naturalmente" : "Encerrada por timeout";
+
+      renderBalls(document.getElementById("ballsList"), viewRound.naturalBalls, viewRound.extraBalls);
+      renderCartelas(viewRound);
+      renderBallsReport(viewRound);
+    }
+
+    roundSelect.addEventListener("change", () => {
+      renderRound(roundSelect.value);
+    });
+
+    reportPageSize.addEventListener("change", () => {
+      reportState.pageSize = Number(reportPageSize.value) || 10;
+      reportState.page = 1;
+      applyReportFilterAndRender();
+    });
+
+    reportSearch.addEventListener("input", () => {
+      reportState.search = reportSearch.value;
+      reportState.page = 1;
+      applyReportFilterAndRender();
+    });
+
+    pageFirst.addEventListener("click", () => {
+      reportState.page = 1;
+      applyReportFilterAndRender();
+    });
+    pagePrev.addEventListener("click", () => {
+      reportState.page -= 1;
+      applyReportFilterAndRender();
+    });
+    pageNext.addEventListener("click", () => {
+      reportState.page += 1;
+      applyReportFilterAndRender();
+    });
+    pageLast.addEventListener("click", () => {
+      const totalPages = Math.max(1, Math.ceil(reportState.filteredRows.length / reportState.pageSize));
+      reportState.page = totalPages;
+      applyReportFilterAndRender();
+    });
+
+    initThemeToggle();
+    initSidebarReveal();
+    renderRound(roundSelect.value);
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,558 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iGP Backoffice - Players</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f1730;
+      --panel-2:#111c3a;
+      --border:rgba(255,255,255,.08);
+      --text:#e7ecff;
+      --muted:rgba(231,236,255,.65);
+      --muted-2:rgba(231,236,255,.45);
+      --gold:#f5c84c;
+      --purple:#7a5cff;
+      --green:#2ee59d;
+      --yellow:#ffd34d;
+      --red:#ff4d6d;
+      --radius:16px;
+      --shadow-soft: 0 10px 22px rgba(0,0,0,.25);
+      --font-ui: "Inter", "Segoe UI Variable Text", "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body.light-theme{
+      --bg:#e9f0ff;
+      --panel:#ffffff;
+      --panel-2:#f1f6ff;
+      --border:rgba(15,23,42,.18);
+      --text:#0b1530;
+      --muted:rgba(11,21,48,.80);
+      --muted-2:rgba(11,21,48,.62);
+      --shadow-soft: 0 10px 24px rgba(15,23,42,.11);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font-ui);
+      font-size:15px;
+      line-height:1.45;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.18), transparent 60%),
+        linear-gradient(180deg, #070a14, var(--bg) 40%, #070a14);
+      min-height:100vh;
+    }
+    body.light-theme{
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.16), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.14), transparent 60%),
+        linear-gradient(180deg, #f9fbff, var(--bg) 40%, #e4ecff);
+    }
+    body.light-theme .sidebar{
+      background: linear-gradient(180deg, #f5f8ff, #edf3ff);
+    }
+    body.light-theme .nav a:hover{
+      background: rgba(59,88,152,.10);
+      border-color: rgba(59,88,152,.20);
+    }
+    body.light-theme .nav a.active{
+      background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(245,200,76,.18));
+      border-color: rgba(82,60,188,.30);
+    }
+    body.light-theme .badge{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(15,23,42,.06);
+    }
+    body.light-theme .footer{
+      background: rgba(255,255,255,.82);
+      border-color: rgba(15,23,42,.20);
+    }
+    body.light-theme .select,
+    body.light-theme .input,
+    body.light-theme .btn{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(255,255,255,.92);
+    }
+    body.light-theme .btn:hover{
+      background: #ffffff;
+    }
+    body.light-theme .btn.primary{
+      border-color: rgba(82,60,188,.36);
+      background: linear-gradient(135deg, rgba(122,92,255,.28), rgba(245,200,76,.24));
+    }
+    body.light-theme .card{
+      background: linear-gradient(180deg, #ffffff, #f2f7ff);
+    }
+    body.light-theme .metric .delta,
+    body.light-theme .status,
+    body.light-theme .event{
+      border-color: rgba(15,23,42,.20);
+      background: rgba(255,255,255,.82);
+    }
+    body.light-theme table{
+      border-color: rgba(15,23,42,.18);
+      background: rgba(255,255,255,.90);
+    }
+    body.light-theme th,
+    body.light-theme td{
+      border-bottom-color: rgba(15,23,42,.10);
+    }
+    body.light-theme th{
+      color: rgba(11,21,48,.88);
+      background: rgba(15,23,42,.05);
+    }
+    body.light-theme .players-table tbody tr:hover{
+      background: rgba(15,23,42,.05);
+    }
+    .app{display:grid;grid-template-columns:1fr;min-height:100vh}
+    .sidebar{
+      border-right:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,23,48,.85), rgba(15,23,48,.65));
+      padding:20px 16px;
+      position:fixed;
+      left:0;
+      top:0;
+      width:280px;
+      height:100vh;
+      overflow:auto;
+      z-index:40;
+      transform: translateX(calc(-100% + 18px));
+      transition: transform .2s ease;
+    }
+    body.sidebar-open .sidebar{transform: translateX(0)}
+    .sidebar-reveal{
+      position:fixed;left:0;top:50%;transform:translateY(-50%);
+      width:20px;height:96px;border:1px solid var(--border);border-left:none;border-radius:0 10px 10px 0;
+      background: rgba(255,255,255,.08);color:var(--text);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;z-index:45;backdrop-filter: blur(6px);font-size:12px;user-select:none;
+    }
+    body.light-theme .sidebar-reveal{background: rgba(15,23,42,.10);border-color: rgba(15,23,42,.20)}
+    .brand{display:flex;align-items:center;gap:12px;padding:10px 10px 16px;margin-bottom:10px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(245,200,76,.85), transparent 70%),
+        radial-gradient(18px 18px at 70% 70%, rgba(122,92,255,.75), transparent 70%),
+        linear-gradient(135deg, rgba(245,200,76,.15), rgba(122,92,255,.2));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow-soft);
+    }
+    .brand h1{font-family:var(--font-mono);font-size:14px;margin:0;letter-spacing:.4px}
+    .brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+    .nav{display:flex;flex-direction:column;gap:6px;padding:10px}
+    .nav a{
+      text-decoration:none;color:var(--muted);padding:10px;border-radius:12px;border:1px solid transparent;
+      display:flex;align-items:center;justify-content:space-between;gap:10px;transition:.18s ease;
+    }
+    .nav a:hover{background: rgba(255,255,255,.04);border-color: rgba(255,255,255,.08);color:var(--text)}
+    .nav a.active{background: linear-gradient(135deg, rgba(122,92,255,.22), rgba(245,200,76,.10));border-color: rgba(122,92,255,.28);color:var(--text)}
+    .badge{font-family:var(--font-mono);font-size:12px;color:var(--text);padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05)}
+    .footer{margin-top:18px;padding:12px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,.02);font-size:13px;color:var(--muted)}
+
+    .main{padding:20px;padding-left:36px}
+    .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:14px}
+    .title h2{margin:0 0 4px 0;font-size:24px}
+    .title span{color:var(--muted);font-size:13px}
+    .actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .select,.input,.btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none;
+      font-size:13px;
+    }
+    .input{min-width:220px}
+    .btn{cursor:pointer;transition:.15s ease}
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.06)}
+    .btn.theme-toggle{
+      width:44px;
+      height:44px;
+      padding:0;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .btn.theme-toggle svg{
+      width:22px;
+      height:22px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.8;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .btn.primary{border-color: rgba(122,92,255,.35);background: linear-gradient(135deg, rgba(122,92,255,.35), rgba(245,200,76,.15))}
+
+    .grid{display:grid;gap:14px}
+    .kpis{grid-template-columns: repeat(4,minmax(180px,1fr));margin-bottom:14px}
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,28,58,.85), rgba(15,23,48,.65));
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px -1px auto -1px;
+      height:2px;
+      background: linear-gradient(90deg, rgba(122,92,255,.7), rgba(245,200,76,.6), rgba(46,229,157,.55));
+      opacity:.65;
+    }
+    .card .hd{padding:12px 14px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .card .hd .lbl{font-size:13px;color:var(--muted);letter-spacing:.25px}
+    .card .bd{padding:10px 14px 14px}
+    .metric{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+    .metric .val{font-family:var(--font-mono);font-size:24px;font-weight:700;letter-spacing:.2px}
+    .metric .delta{font-size:13px;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);color:var(--muted);background: rgba(255,255,255,.04)}
+    .delta.up{color:var(--green);border-color: rgba(46,229,157,.25);background: rgba(46,229,157,.08)}
+    .delta.down{color:var(--red);border-color: rgba(255,77,109,.25);background: rgba(255,77,109,.08)}
+
+    .content{display:grid;grid-template-columns: 1.6fr 1fr;gap:14px}
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;
+      border-radius:14px;border:1px solid rgba(255,255,255,.08);
+      background: rgba(8,12,25,.25);overflow:hidden;
+    }
+    .players-table tbody tr{cursor:pointer;transition:background .15s ease}
+    .players-table tbody tr:hover{background:rgba(255,255,255,.04)}
+    th,td{padding:10px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.06);color:var(--muted);text-align:left;white-space:nowrap}
+    th{color:rgba(231,236,255,.78);font-weight:600;background: rgba(255,255,255,.03)}
+    tr:last-child td{border-bottom:none}
+    td strong{font-family:var(--font-mono);color:var(--text);font-weight:600}
+    .status{font-family:var(--font-mono);display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;font-size:12px;border:1px solid rgba(255,255,255,.12)}
+    .status .dot{width:8px;height:8px;border-radius:99px;display:inline-block}
+    .status.ok{color:var(--green);background:rgba(46,229,157,.08);border-color:rgba(46,229,157,.25)}
+    .status.warn{color:var(--yellow);background:rgba(255,211,77,.08);border-color:rgba(255,211,77,.28)}
+    .status.risk{color:var(--red);background:rgba(255,77,109,.08);border-color:rgba(255,77,109,.28)}
+    .status.ok .dot{background:var(--green)}
+    .status.warn .dot{background:var(--yellow)}
+    .status.risk .dot{background:var(--red)}
+
+    .side-stack{display:grid;gap:14px}
+    .profile-box{display:grid;gap:10px}
+    .profile-row{display:flex;justify-content:space-between;gap:10px;font-size:13px;color:var(--muted)}
+    .profile-row strong{font-family:var(--font-mono);color:var(--text)}
+    .activity{display:grid;gap:8px}
+    .event{padding:10px 12px;border:1px solid rgba(255,255,255,.10);border-radius:12px;background:rgba(255,255,255,.03)}
+    .event h4{margin:0 0 4px 0;font-size:13px;color:var(--text)}
+    .event p{margin:0;font-size:13px;color:var(--muted)}
+
+    @media (max-width:1200px){
+      .kpis{grid-template-columns: repeat(2,minmax(180px,1fr));}
+      .content{grid-template-columns:1fr}
+    }
+    @media (max-width:860px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;width:auto;height:auto;transform:none}
+      .sidebar-reveal{display:none}
+      .input{min-width:0;width:100%}
+      .actions{width:100%}
+    }
+    @media (max-width:520px){
+      .kpis{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visao Operacao + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a class="active" href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="#"><span>Games</span><span class="badge">842</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+      <div class="footer">
+        <div style="margin-bottom:6px;">Perfil: <strong style="color:var(--text)">Operacao Interna</strong></div>
+        <div>Filtro atual: <span style="color:var(--text)">Todos os clientes</span></div>
+      </div>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Players</h2>
+          <span>Visao operacional de base, risco e comportamento dos jogadores</span>
+        </div>
+        <div class="actions">
+          <input id="searchInput" class="input" type="text" placeholder="Buscar por player ID, nome ou operador" />
+          <select id="profileSelect" class="select" aria-label="Perfil">
+            <option value="igp" selected>Operacao Interna (iGP)</option>
+            <option value="client">Cliente (Operadora)</option>
+          </select>
+          <select id="periodSelect" class="select" aria-label="Periodo">
+            <option value="today" selected>Hoje</option>
+            <option value="24h">Ultimas 24 horas</option>
+            <option value="7d">Ultimos 7 dias</option>
+            <option value="30d">Ultimos 30 dias</option>
+          </select>
+          <select id="clientSelect" class="select" aria-label="Cliente">
+            <option value="all" selected>Todos os Clientes</option>
+            <option value="a">Operadora A</option>
+            <option value="b">Operadora B</option>
+            <option value="c">Operadora C</option>
+          </select>
+          <select id="statusFilter" class="select" aria-label="Status">
+            <option value="all">Todos status</option>
+            <option value="ok">Ativo</option>
+            <option value="warn">Atencao</option>
+            <option value="risk">Risco</option>
+          </select>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+          <button id="clearBtn" class="btn">Limpar</button>
+          <button class="btn primary">Exportar CSV</button>
+        </div>
+      </div>
+
+      <section class="grid kpis">
+        <article class="card">
+          <div class="hd"><div class="lbl">Players ativos (24h)</div><div class="delta up">+6.4%</div></div>
+          <div class="bd"><div class="metric"><div class="val">1,284</div><div>base total</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">Novos cadastros</div><div class="delta up">+12.1%</div></div>
+          <div class="bd"><div class="metric"><div class="val">93</div><div>hoje</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">Retencao D7</div><div class="delta down">-1.8%</div></div>
+          <div class="bd"><div class="metric"><div class="val">38.2%</div><div>media</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">Players em risco</div><div class="delta down">+3 casos</div></div>
+          <div class="bd"><div class="metric"><div class="val">27</div><div>monitorados</div></div></div>
+        </article>
+      </section>
+
+      <section class="content">
+        <article class="card" style="padding:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;">
+            <h3 style="margin:0;font-size:14px;">Lista de players</h3>
+            <span style="font-size:12px;color:var(--muted)" id="countLabel">8 resultados</span>
+          </div>
+          <table class="players-table">
+            <thead>
+              <tr>
+                <th>Player ID</th>
+                <th>Nome</th>
+                <th>Operador</th>
+                <th>Ultimo login</th>
+                <th>Deposito 30d</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="playersBody">
+              <tr data-status="ok" data-player-id="PLR-10321" data-player-name="Ana Costa" data-player-operator="Operadora A"><td><strong>PLR-10321</strong></td><td>Ana Costa</td><td>Operadora A</td><td>5 min atras</td><td>R$ 4.820</td><td><span class="status ok"><span class="dot"></span>Ativo</span></td></tr>
+              <tr data-status="warn" data-player-id="PLR-11744" data-player-name="Marcio Lima" data-player-operator="Operadora B"><td><strong>PLR-11744</strong></td><td>Marcio Lima</td><td>Operadora B</td><td>42 min atras</td><td>R$ 8.910</td><td><span class="status warn"><span class="dot"></span>Atencao</span></td></tr>
+              <tr data-status="risk" data-player-id="PLR-12007" data-player-name="Julia Nunes" data-player-operator="Operadora C"><td><strong>PLR-12007</strong></td><td>Julia Nunes</td><td>Operadora C</td><td>1 h atras</td><td>R$ 15.230</td><td><span class="status risk"><span class="dot"></span>Risco</span></td></tr>
+              <tr data-status="ok" data-player-id="PLR-09873" data-player-name="Carlos Silva" data-player-operator="Operadora A"><td><strong>PLR-09873</strong></td><td>Carlos Silva</td><td>Operadora A</td><td>2 h atras</td><td>R$ 2.110</td><td><span class="status ok"><span class="dot"></span>Ativo</span></td></tr>
+              <tr data-status="warn" data-player-id="PLR-12119" data-player-name="Beatriz Prado" data-player-operator="Operadora D"><td><strong>PLR-12119</strong></td><td>Beatriz Prado</td><td>Operadora D</td><td>3 h atras</td><td>R$ 11.470</td><td><span class="status warn"><span class="dot"></span>Atencao</span></td></tr>
+              <tr data-status="ok" data-player-id="PLR-12222" data-player-name="Rafael Souza" data-player-operator="Operadora E"><td><strong>PLR-12222</strong></td><td>Rafael Souza</td><td>Operadora E</td><td>3 h atras</td><td>R$ 1.940</td><td><span class="status ok"><span class="dot"></span>Ativo</span></td></tr>
+              <tr data-status="risk" data-player-id="PLR-09452" data-player-name="Fernanda Alves" data-player-operator="Operadora B"><td><strong>PLR-09452</strong></td><td>Fernanda Alves</td><td>Operadora B</td><td>5 h atras</td><td>R$ 18.090</td><td><span class="status risk"><span class="dot"></span>Risco</span></td></tr>
+              <tr data-status="ok" data-player-id="PLR-12398" data-player-name="Igor Mendes" data-player-operator="Operadora C"><td><strong>PLR-12398</strong></td><td>Igor Mendes</td><td>Operadora C</td><td>8 h atras</td><td>R$ 3.550</td><td><span class="status ok"><span class="dot"></span>Ativo</span></td></tr>
+            </tbody>
+          </table>
+        </article>
+
+        <div class="side-stack">
+          <article class="card" style="padding:14px;">
+            <h3 style="margin:0 0 10px 0;font-size:14px;">Player em foco</h3>
+            <div class="profile-box">
+              <div class="profile-row"><span>ID</span><strong>PLR-12007</strong></div>
+              <div class="profile-row"><span>Nome</span><strong>Julia Nunes</strong></div>
+              <div class="profile-row"><span>Operador</span><strong>Operadora C</strong></div>
+              <div class="profile-row"><span>RTP 7d</span><strong>108.2%</strong></div>
+              <div class="profile-row"><span>Sessao media</span><strong>58 min</strong></div>
+              <div class="profile-row"><span>Acao sugerida</span><strong>Revisao manual</strong></div>
+            </div>
+          </article>
+
+          <article class="card" style="padding:14px;">
+            <h3 style="margin:0 0 10px 0;font-size:14px;">Atividade recente</h3>
+            <div class="activity">
+              <div class="event"><h4>Padrao de aposta alterado</h4><p>Fortune Tiger: stake media +37% nas ultimas 6h.</p></div>
+              <div class="event"><h4>Multi-device detectado</h4><p>3 dispositivos diferentes na ultima semana.</p></div>
+              <div class="event"><h4>Alerta de risco ativo</h4><p>Coin-out acima do baseline por 2 dias consecutivos.</p></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const FILTERS_KEY = "igp-dashboard-filters-v1";
+
+    const profileSelect = document.getElementById("profileSelect");
+    const periodSelect = document.getElementById("periodSelect");
+    const clientSelect = document.getElementById("clientSelect");
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const clearBtn = document.getElementById("clearBtn");
+    const body = document.getElementById("playersBody");
+    const countLabel = document.getElementById("countLabel");
+    const rows = Array.from(body.querySelectorAll("tr"));
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    function applyFilters() {
+      const term = searchInput.value.trim().toLowerCase();
+      const status = statusFilter.value;
+      let visible = 0;
+
+      rows.forEach((row) => {
+        const txt = row.textContent.toLowerCase();
+        const rowStatus = row.dataset.status;
+        const matchesText = !term || txt.includes(term);
+        const matchesStatus = status === "all" || rowStatus === status;
+        const show = matchesText && matchesStatus;
+        row.style.display = show ? "" : "none";
+        if (show) visible += 1;
+      });
+
+      countLabel.textContent = visible + " resultado" + (visible === 1 ? "" : "s");
+    }
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      const saved = localStorage.getItem(THEME_KEY) || "dark";
+      setTheme(saved);
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "❮";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "❯";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "❯";
+        }
+      });
+    }
+
+    function saveGlobalFilters() {
+      const payload = {
+        profile: profileSelect.value,
+        period: periodSelect.value,
+        client: clientSelect.value
+      };
+      localStorage.setItem(FILTERS_KEY, JSON.stringify(payload));
+    }
+
+    function restoreGlobalFilters() {
+      const raw = localStorage.getItem(FILTERS_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.profile) profileSelect.value = parsed.profile;
+        if (parsed?.period) periodSelect.value = parsed.period;
+        if (parsed?.client) clientSelect.value = parsed.client;
+      } catch {}
+    }
+
+    [profileSelect, periodSelect, clientSelect].forEach((el) => {
+      el.addEventListener("change", saveGlobalFilters);
+    });
+
+    function buildPlayerDetailsUrl(row) {
+      const params = new URLSearchParams({
+        id: row.dataset.playerId || "",
+        name: row.dataset.playerName || "",
+        operator: row.dataset.playerOperator || "",
+        status: row.dataset.status || ""
+      });
+      return "player-details.html?" + params.toString();
+    }
+
+    searchInput.addEventListener("input", applyFilters);
+    statusFilter.addEventListener("change", applyFilters);
+    rows.forEach((row) => {
+      row.addEventListener("click", () => {
+        window.location.href = buildPlayerDetailsUrl(row);
+      });
+    });
+    clearBtn.addEventListener("click", () => {
+      searchInput.value = "";
+      statusFilter.value = "all";
+      applyFilters();
+    });
+
+    restoreGlobalFilters();
+    initSidebarReveal();
+    initThemeToggle();
+    applyFilters();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

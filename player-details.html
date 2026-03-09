@@ -1,0 +1,684 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iGP Backoffice - Player Details</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --border:rgba(255,255,255,.08);
+      --text:#e7ecff;
+      --muted:rgba(231,236,255,.65);
+      --green:#2ee59d;
+      --yellow:#ffd34d;
+      --red:#ff4d6d;
+      --radius:16px;
+      --shadow-soft: 0 10px 22px rgba(0,0,0,.25);
+      --font-ui: "Inter", "Segoe UI Variable Text", "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body.light-theme{
+      --bg:#e9f0ff;
+      --border:rgba(15,23,42,.18);
+      --text:#0b1530;
+      --muted:rgba(11,21,48,.80);
+      --shadow-soft: 0 10px 24px rgba(15,23,42,.11);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font-ui);
+      font-size:15px;
+      line-height:1.45;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.18), transparent 60%),
+        linear-gradient(180deg, #070a14, var(--bg) 40%, #070a14);
+      min-height:100vh;
+    }
+    body.light-theme{
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.16), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.14), transparent 60%),
+        linear-gradient(180deg, #f9fbff, var(--bg) 40%, #e4ecff);
+    }
+    body.light-theme .sidebar{
+      background: linear-gradient(180deg, #f5f8ff, #edf3ff);
+    }
+    body.light-theme .nav a:hover{
+      background: rgba(59,88,152,.10);
+      border-color: rgba(59,88,152,.20);
+    }
+    body.light-theme .nav a.active{
+      background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(245,200,76,.18));
+      border-color: rgba(82,60,188,.30);
+    }
+    body.light-theme .badge{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(15,23,42,.06);
+    }
+    body.light-theme .select,
+    body.light-theme .btn,
+    body.light-theme .input{
+      border-color: rgba(15,23,42,.22);
+      background: rgba(255,255,255,.92);
+    }
+    body.light-theme .btn.primary{
+      border-color: rgba(82,60,188,.36);
+      background: linear-gradient(135deg, rgba(122,92,255,.28), rgba(245,200,76,.24));
+    }
+    body.light-theme .card{
+      background: linear-gradient(180deg, #ffffff, #f2f7ff);
+    }
+    body.light-theme .pill,
+    body.light-theme .tag{
+      border-color: rgba(15,23,42,.20);
+      background: rgba(255,255,255,.82);
+    }
+    body.light-theme table{
+      border-color: rgba(15,23,42,.18);
+      background: rgba(255,255,255,.90);
+    }
+    body.light-theme th,
+    body.light-theme td{
+      border-bottom-color: rgba(15,23,42,.10);
+    }
+    body.light-theme th{
+      color: rgba(11,21,48,.88);
+      background: rgba(15,23,42,.05);
+    }
+
+    .app{display:grid;grid-template-columns:1fr;min-height:100vh}
+    .sidebar{
+      border-right:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,23,48,.85), rgba(15,23,48,.65));
+      padding:20px 16px;position:fixed;left:0;top:0;width:280px;height:100vh;overflow:auto;
+      z-index:40;transform: translateX(calc(-100% + 18px));transition: transform .2s ease;
+    }
+    body.sidebar-open .sidebar{transform: translateX(0)}
+    .sidebar-reveal{
+      position:fixed;left:0;top:50%;transform:translateY(-50%);
+      width:20px;height:96px;border:1px solid var(--border);border-left:none;border-radius:0 10px 10px 0;
+      background: rgba(255,255,255,.08);color:var(--text);display:flex;align-items:center;justify-content:center;
+      cursor:pointer;z-index:45;backdrop-filter: blur(6px);font-size:12px;user-select:none;
+    }
+    body.light-theme .sidebar-reveal{background: rgba(15,23,42,.10);border-color: rgba(15,23,42,.20)}
+    .brand{display:flex;align-items:center;gap:12px;padding:10px 10px 16px;margin-bottom:10px}
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(245,200,76,.85), transparent 70%),
+        radial-gradient(18px 18px at 70% 70%, rgba(122,92,255,.75), transparent 70%),
+        linear-gradient(135deg, rgba(245,200,76,.15), rgba(122,92,255,.2));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow-soft);
+    }
+    .brand h1{font-size:14px;margin:0}
+    .brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+    .nav{display:flex;flex-direction:column;gap:6px;padding:10px}
+    .nav a{
+      text-decoration:none;color:var(--muted);padding:10px;border-radius:12px;border:1px solid transparent;
+      display:flex;align-items:center;justify-content:space-between;transition:.18s ease;
+    }
+    .nav a:hover{background: rgba(255,255,255,.04);border-color: rgba(255,255,255,.08);color:var(--text)}
+    .nav a.active{background: linear-gradient(135deg, rgba(122,92,255,.22), rgba(245,200,76,.10));border-color: rgba(122,92,255,.28);color:var(--text)}
+    .badge{font-size:12px;color:var(--text);padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05)}
+    .brand h1,
+    .badge,
+    .metric .val,
+    .kpi .val,
+    td strong,
+    .status,
+    .delta,
+    .pill,
+    .tag{
+      font-family:var(--font-mono);
+    }
+
+    .main{padding:20px;padding-left:36px}
+
+    .topbar{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btn,.select,.input{
+      border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.04);color:var(--text);
+      padding:10px 12px;border-radius:12px;outline:none;font-size:13px;
+    }
+    .btn{text-decoration:none;display:inline-flex;align-items:center}
+    .btn.theme-toggle{
+      width:44px;
+      height:44px;
+      padding:0;
+      justify-content:center;
+    }
+    .btn.theme-toggle svg{
+      width:22px;
+      height:22px;
+      stroke:currentColor;
+      fill:none;
+      stroke-width:1.8;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .btn.primary{border-color: rgba(122,92,255,.35);background: linear-gradient(135deg, rgba(122,92,255,.35), rgba(245,200,76,.15))}
+    .btn.sm{
+      padding:7px 12px;
+      font-size:13px;
+      border-radius:10px;
+      width:auto;
+      align-self:flex-start;
+      justify-self:start;
+      text-transform:uppercase;
+    }
+
+    .card{
+      border:1px solid var(--border);border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,28,58,.85), rgba(15,23,48,.65));
+      box-shadow: var(--shadow-soft);overflow:hidden;position:relative;
+    }
+    .card::before{
+      content:"";position:absolute; inset:-1px -1px auto -1px;height:2px;
+      background: linear-gradient(90deg, rgba(122,92,255,.7), rgba(245,200,76,.6), rgba(46,229,157,.55));
+      opacity:.65;
+    }
+    .header{padding:14px}
+    .title h2{margin:0 0 4px;font-size:24px}
+    .title p{margin:0;color:var(--muted);font-size:13px}
+    .pill{
+      display:inline-flex;align-items:center;gap:6px;padding:4px 9px;border-radius:999px;font-size:12px;
+      border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.04);color:var(--muted);
+    }
+    .pill .dot{width:8px;height:8px;border-radius:50%}
+    .pill.ok{color:var(--green);border-color: rgba(46,229,157,.25);background: rgba(46,229,157,.08)}
+    .pill.warn{color:var(--yellow);border-color: rgba(255,211,77,.28);background: rgba(255,211,77,.08)}
+    .pill.risk{color:var(--red);border-color: rgba(255,77,109,.28);background: rgba(255,77,109,.08)}
+    .pill.ok .dot{background:var(--green)}
+    .pill.warn .dot{background:var(--yellow)}
+    .pill.risk .dot{background:var(--red)}
+
+    .kpis{display:grid;grid-template-columns:repeat(4,minmax(180px,1fr));gap:12px;margin-top:14px}
+    .kpi{padding:12px 14px}
+    .kpi .lbl{font-size:12px;color:var(--muted)}
+    .kpi .val{font-size:24px;font-weight:700;margin-top:6px}
+    .kpi .meta{font-size:12px;color:var(--muted);margin-top:4px}
+
+    .layout{display:grid;grid-template-columns:1.7fr 1fr;gap:14px;margin-top:14px}
+    .section{padding:14px}
+    .section h3{margin:0 0 10px;font-size:14px}
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);background: rgba(8,12,25,.25);overflow:hidden;
+    }
+    th,td{padding:10px;font-size:13px;border-bottom:1px solid rgba(255,255,255,.06);color:var(--muted);text-align:left;white-space:nowrap}
+    th{color:rgba(231,236,255,.78);font-weight:600;background: rgba(255,255,255,.03)}
+    td strong{color:var(--text)}
+    tr:last-child td{border-bottom:none}
+
+    .stack{display:grid;gap:14px}
+    .info-grid{display:grid;gap:8px}
+    .row{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:var(--muted)}
+    .row strong{color:var(--text)}
+    .tag{font-size:11px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.04);color:var(--text)}
+    .form-grid{display:grid;gap:8px}
+    .form-grid .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .form-grid .full{grid-column:1 / -1}
+    .form-actions{margin-top:8px}
+
+    @media (max-width:1200px){
+      .kpis{grid-template-columns:repeat(2,minmax(180px,1fr))}
+      .layout{grid-template-columns:1fr}
+    }
+    @media (max-width:860px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;width:auto;height:auto;transform:none}
+      .sidebar-reveal{display:none}
+      .kpis{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visao Operacao + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a class="active" href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="#"><span>Games</span><span class="badge">842</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn" href="players.html">Voltar para Players</a>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+        <div class="actions">
+          <select id="profileSelect" class="select" aria-label="Perfil">
+            <option value="igp" selected>Operacao Interna (iGP)</option>
+            <option value="client">Cliente (Operadora)</option>
+          </select>
+          <select id="periodSelect" class="select" aria-label="Periodo">
+            <option value="today" selected>Hoje</option>
+            <option value="24h">Ultimas 24 horas</option>
+            <option value="7d">Ultimos 7 dias</option>
+            <option value="30d">Ultimos 30 dias</option>
+          </select>
+          <select id="clientSelect" class="select" aria-label="Cliente">
+            <option value="all" selected>Todos os Clientes</option>
+            <option value="a">Operadora A</option>
+            <option value="b">Operadora B</option>
+            <option value="c">Operadora C</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="card header">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div class="title">
+            <h2 id="playerName">Player</h2>
+            <p><span id="playerId">-</span> | <span id="playerOperator">-</span> | KYC: Verificado</p>
+          </div>
+          <div id="playerStatus" class="pill ok"><span class="dot"></span>Ativo</div>
+        </div>
+      </section>
+
+      <section class="kpis">
+        <article class="card kpi">
+          <div class="lbl">Saldo atual</div>
+          <div class="val" id="kpiBalance">R$ 0</div>
+          <div class="meta">wallet principal</div>
+        </article>
+        <article class="card kpi">
+          <div class="lbl">Saldo bonus</div>
+          <div class="val" id="kpiBonus">R$ 0</div>
+          <div class="meta">valor bloqueado: <span id="kpiBonusLocked">R$ 0</span></div>
+        </article>
+        <article class="card kpi">
+          <div class="lbl">Depositos (30d)</div>
+          <div class="val" id="kpiDeposits">R$ 0</div>
+          <div class="meta">saques (30d): <span id="kpiWithdrawals">R$ 0</span></div>
+        </article>
+        <article class="card kpi">
+          <div class="lbl">Saque pendente</div>
+          <div class="val" id="kpiPending">R$ 0</div>
+          <div class="meta">ultimo saque: <span id="kpiLastWithdrawal">-</span></div>
+        </article>
+      </section>
+
+      <section class="layout">
+        <div class="stack">
+          <article class="card section">
+            <h3>Movimentacoes financeiras</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Data/Hora</th>
+                  <th>Tipo</th>
+                  <th>Canal</th>
+                  <th>Valor</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="txBody"></tbody>
+            </table>
+          </article>
+
+          <article class="card section">
+            <h3>Jogadas (Rounds recentes)</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Round ID</th>
+                  <th>Data/Hora</th>
+                  <th>Jogo</th>
+                  <th>Bet</th>
+                  <th>Win</th>
+                  <th>Resultado</th>
+                </tr>
+              </thead>
+              <tbody id="roundBody"></tbody>
+            </table>
+          </article>
+        </div>
+
+        <div class="stack">
+          <article class="card section">
+            <h3>Ajuste manual de saldo</h3>
+            <div class="form-grid">
+              <div class="row">
+                <select id="balanceAction" class="select" aria-label="Acao">
+                  <option value="deposit">Depositar</option>
+                  <option value="withdraw">Sacar</option>
+                </select>
+                <select id="balanceTarget" class="select" aria-label="Tipo de saldo">
+                  <option value="cash">Saldo normal</option>
+                  <option value="bonus">Saldo bonus</option>
+                </select>
+              </div>
+              <div class="row">
+                <input id="balanceAmount" class="input" type="number" min="0" step="0.01" placeholder="Valor" />
+                <input id="balanceRef" class="input" type="text" placeholder="Referencia/ID (opcional)" />
+              </div>
+              <textarea id="balanceReason" class="input full" rows="3" placeholder="Motivo do ajuste (ex: correcao, bonus, chargeback)"></textarea>
+              <button id="balanceApply" class="btn primary sm form-actions">APLICAR AJUSTE</button>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Perfil e limites</h3>
+            <div class="info-grid">
+              <div class="row"><span>Pais</span><strong id="infoCountry">Brasil</strong></div>
+              <div class="row"><span>Dispositivo principal</span><strong id="infoDevice">Android</strong></div>
+              <div class="row"><span>Ultimo IP</span><strong id="infoIp">177.91.12.88</strong></div>
+              <div class="row"><span>Login mais recente</span><strong id="infoLogin">Hoje, 12:31</strong></div>
+              <div class="row"><span>Limite diario de deposito</span><strong id="infoLimit">R$ 2.500</strong></div>
+              <div class="row"><span>Autoexclusao</span><strong>Nao</strong></div>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Risco e compliance</h3>
+            <div class="info-grid">
+              <div class="row"><span>Score antifraude</span><strong id="riskScore">42/100</strong></div>
+              <div class="row"><span>Multi-account</span><strong id="riskMulti">Baixo</strong></div>
+              <div class="row"><span>Chargeback historico</span><strong id="riskChargeback">0 eventos</strong></div>
+              <div class="row"><span>Flags ativas</span><strong id="riskFlags" class="tag">Nenhuma</strong></div>
+              <div class="row"><span>Proxima acao</span><strong id="riskAction">Monitorar</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const FILTERS_KEY = "igp-dashboard-filters-v1";
+
+    const profileSelect = document.getElementById("profileSelect");
+    const periodSelect = document.getElementById("periodSelect");
+    const clientSelect = document.getElementById("clientSelect");
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const balanceAction = document.getElementById("balanceAction");
+    const balanceTarget = document.getElementById("balanceTarget");
+    const balanceAmount = document.getElementById("balanceAmount");
+    const balanceRef = document.getElementById("balanceRef");
+    const balanceReason = document.getElementById("balanceReason");
+    const balanceApply = document.getElementById("balanceApply");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    const mockByPlayer = {
+      "PLR-12007": {
+        balance: "R$ 3.284",
+        bonus: "R$ 680",
+        bonusLocked: "R$ 220",
+        deposits30d: "R$ 15.230",
+        withdrawals30d: "R$ 13.920",
+        pending: "R$ 1.200",
+        lastWithdrawal: "Hoje, 10:22",
+        country: "Brasil",
+        device: "iPhone 15 / iOS",
+        ip: "179.102.55.28",
+        login: "Hoje, 12:05",
+        limit: "R$ 5.000",
+        riskScore: "78/100",
+        riskMulti: "Medio",
+        riskChargeback: "1 evento",
+        riskFlags: "Payout acima da media",
+        riskAction: "Revisao manual",
+        tx: [
+          ["2026-03-05 10:22", "Saque", "Pix", "R$ 1.200", "Pendente"],
+          ["2026-03-05 08:51", "Deposito", "Pix", "R$ 2.000", "Aprovado"],
+          ["2026-03-04 23:10", "Ajuste bonus", "Sistema", "R$ 150", "Aplicado"],
+          ["2026-03-04 21:03", "Saque", "Pix", "R$ 4.300", "Aprovado"],
+          ["2026-03-04 19:42", "Deposito", "Cartao", "R$ 500", "Aprovado"]
+        ],
+        rounds: [
+          ["RND-884102", "2026-03-05 11:56", "Fortune Tiger", "R$ 40", "R$ 0", "Perda"],
+          ["RND-884088", "2026-03-05 11:54", "Fortune Tiger", "R$ 40", "R$ 210", "Ganho"],
+          ["RND-884041", "2026-03-05 11:49", "Show Ball 3", "R$ 25", "R$ 0", "Perda"],
+          ["RND-883990", "2026-03-05 11:43", "Fortune Dragon", "R$ 50", "R$ 300", "Ganho"],
+          ["RND-883945", "2026-03-05 11:37", "Pharaos", "R$ 20", "R$ 0", "Perda"]
+        ]
+      }
+    };
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      setTheme(localStorage.getItem(THEME_KEY) || "dark");
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "❮";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "❯";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "❯";
+        }
+      });
+    }
+
+    function saveGlobalFilters() {
+      localStorage.setItem(FILTERS_KEY, JSON.stringify({
+        profile: profileSelect.value,
+        period: periodSelect.value,
+        client: clientSelect.value
+      }));
+    }
+
+    function restoreGlobalFilters() {
+      const raw = localStorage.getItem(FILTERS_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.profile) profileSelect.value = parsed.profile;
+        if (parsed?.period) periodSelect.value = parsed.period;
+        if (parsed?.client) clientSelect.value = parsed.client;
+      } catch {}
+    }
+
+    function getPlayerParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        id: params.get("id") || "PLR-12007",
+        name: params.get("name") || "Julia Nunes",
+        operator: params.get("operator") || "Operadora C",
+        status: params.get("status") || "ok"
+      };
+    }
+
+    function renderTransactions(rows) {
+      const body = document.getElementById("txBody");
+      body.innerHTML = rows.map((r) => (
+        "<tr><td>" + r[0] + "</td><td><strong>" + r[1] + "</strong></td><td>" + r[2] + "</td><td>" + r[3] + "</td><td>" + r[4] + "</td></tr>"
+      )).join("");
+    }
+
+    function renderRounds(rows) {
+      const body = document.getElementById("roundBody");
+      body.innerHTML = rows.map((r) => (
+        "<tr><td><strong>" + r[0] + "</strong></td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td><td>" + r[4] + "</td><td>" + r[5] + "</td></tr>"
+      )).join("");
+    }
+
+    function renderPage() {
+      const player = getPlayerParams();
+      const data = mockByPlayer[player.id] || {
+        balance: "R$ 1.220",
+        bonus: "R$ 120",
+        bonusLocked: "R$ 0",
+        deposits30d: "R$ 3.500",
+        withdrawals30d: "R$ 1.900",
+        pending: "R$ 0",
+        lastWithdrawal: "2026-03-04 18:00",
+        country: "Brasil",
+        device: "Android",
+        ip: "177.91.12.88",
+        login: "Hoje, 09:48",
+        limit: "R$ 2.500",
+        riskScore: "42/100",
+        riskMulti: "Baixo",
+        riskChargeback: "0 eventos",
+        riskFlags: "Nenhuma",
+        riskAction: "Monitorar",
+        tx: [
+          ["2026-03-05 09:10", "Deposito", "Pix", "R$ 500", "Aprovado"],
+          ["2026-03-04 20:35", "Saque", "Pix", "R$ 300", "Aprovado"],
+          ["2026-03-04 19:13", "Deposito", "Cartao", "R$ 700", "Aprovado"]
+        ],
+        rounds: [
+          ["RND-102991", "2026-03-05 09:22", "Fortune Tiger", "R$ 10", "R$ 0", "Perda"],
+          ["RND-102970", "2026-03-05 09:17", "Pharaos", "R$ 12", "R$ 32", "Ganho"],
+          ["RND-102940", "2026-03-05 09:04", "Show Ball 3", "R$ 8", "R$ 0", "Perda"]
+        ]
+      };
+
+      document.getElementById("playerName").textContent = player.name;
+      document.getElementById("playerId").textContent = player.id;
+      document.getElementById("playerOperator").textContent = player.operator;
+
+      const statusEl = document.getElementById("playerStatus");
+      const statusText = player.status === "risk" ? "Risco" : player.status === "warn" ? "Atencao" : "Ativo";
+      statusEl.className = "pill " + player.status;
+      statusEl.innerHTML = "<span class='dot'></span>" + statusText;
+
+      document.getElementById("kpiBalance").textContent = data.balance;
+      document.getElementById("kpiBonus").textContent = data.bonus;
+      document.getElementById("kpiBonusLocked").textContent = data.bonusLocked;
+      document.getElementById("kpiDeposits").textContent = data.deposits30d;
+      document.getElementById("kpiWithdrawals").textContent = data.withdrawals30d;
+      document.getElementById("kpiPending").textContent = data.pending;
+      document.getElementById("kpiLastWithdrawal").textContent = data.lastWithdrawal;
+
+      document.getElementById("infoCountry").textContent = data.country;
+      document.getElementById("infoDevice").textContent = data.device;
+      document.getElementById("infoIp").textContent = data.ip;
+      document.getElementById("infoLogin").textContent = data.login;
+      document.getElementById("infoLimit").textContent = data.limit;
+      document.getElementById("riskScore").textContent = data.riskScore;
+      document.getElementById("riskMulti").textContent = data.riskMulti;
+      document.getElementById("riskChargeback").textContent = data.riskChargeback;
+      document.getElementById("riskFlags").textContent = data.riskFlags;
+      document.getElementById("riskAction").textContent = data.riskAction;
+
+      renderTransactions(data.tx);
+      renderRounds(data.rounds);
+    }
+
+    function parseMoneyBRL(value) {
+      if (!value) return 0;
+      const cleaned = value.toString().replace(/[^\d,.-]/g, "").replace(/\./g, "").replace(",", ".");
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function formatMoneyBRL(value) {
+      return Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function applyBalanceAdjustment() {
+      const amount = Number(balanceAmount.value || 0);
+      if (!Number.isFinite(amount) || amount <= 0) {
+      return;
+      }
+      const isDeposit = balanceAction.value === "deposit";
+      const isBonus = balanceTarget.value === "bonus";
+      const now = new Date().toLocaleString("pt-BR");
+
+      const balanceEl = isBonus ? document.getElementById("kpiBonus") : document.getElementById("kpiBalance");
+      const current = parseMoneyBRL(balanceEl.textContent);
+      const next = Math.max(0, current + (isDeposit ? amount : -amount));
+      balanceEl.textContent = formatMoneyBRL(next);
+
+      const actionLabel = isDeposit ? "Deposito" : "Saque";
+      const targetLabel = isBonus ? "bonus" : "saldo normal";
+      const ref = balanceRef.value ? " | Ref: " + balanceRef.value : "";
+      const reason = balanceReason.value ? " | Motivo: " + balanceReason.value : "";
+      void now;
+      void actionLabel;
+      void targetLabel;
+      void ref;
+      void reason;
+    }
+
+    [profileSelect, periodSelect, clientSelect].forEach((el) => {
+      el.addEventListener("change", saveGlobalFilters);
+    });
+
+    restoreGlobalFilters();
+    initSidebarReveal();
+    initThemeToggle();
+    renderPage();
+    balanceApply.addEventListener("click", applyBalanceAdjustment);
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+

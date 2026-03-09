@@ -1,0 +1,1466 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>iGP Backoffice — Dashboard (Chart.js)</title>
+
+  <!-- Chart.js (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --panel:#0f1730;
+      --panel-2:#111c3a;
+      --border:rgba(255,255,255,.08);
+      --text:#e7ecff;
+      --muted:rgba(231,236,255,.65);
+      --muted-2:rgba(231,236,255,.45);
+      --gold:#f5c84c;
+      --purple:#7a5cff;
+      --green:#2ee59d;
+      --yellow:#ffd34d;
+      --red:#ff4d6d;
+
+      --radius:16px;
+      --shadow-soft: 0 10px 22px rgba(0,0,0,.25);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --chart-grid: rgba(255,255,255,.08);
+      --chart-tick: rgba(231,236,255,.55);
+      --chart-text: rgba(231,236,255,.70);
+    }
+
+    body.light-theme{
+      --bg:#f3f6ff;
+      --panel:#ffffff;
+      --panel-2:#f7f9ff;
+      --border:rgba(16,24,40,.10);
+      --text:#0f1a33;
+      --muted:rgba(15,26,51,.68);
+      --muted-2:rgba(15,26,51,.52);
+      --shadow-soft: 0 10px 22px rgba(15,23,42,.10);
+      --chart-grid: rgba(15,26,51,.12);
+      --chart-tick: rgba(15,26,51,.55);
+      --chart-text: rgba(15,26,51,.70);
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.22), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.18), transparent 60%),
+        linear-gradient(180deg, #070a14, var(--bg) 40%, #070a14);
+      min-height:100vh;
+      transition: background .2s ease, color .2s ease;
+    }
+
+    body.light-theme{
+      background:
+        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.12), transparent 60%),
+        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.10), transparent 60%),
+        linear-gradient(180deg, #f8faff, var(--bg) 40%, #eef3ff);
+    }
+
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
+    }
+
+    /* Sidebar */
+    .sidebar{
+      border-right:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(15,23,48,.85), rgba(15,23,48,.65));
+      padding:20px 16px;
+      position:sticky;
+      top:0;
+      height:100vh;
+      overflow:auto;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:10px 10px 16px;
+      margin-bottom:10px;
+    }
+    .logo{
+      width:42px;height:42px;border-radius:14px;
+      background:
+        radial-gradient(18px 18px at 30% 30%, rgba(245,200,76,.85), transparent 70%),
+        radial-gradient(18px 18px at 70% 70%, rgba(122,92,255,.75), transparent 70%),
+        linear-gradient(135deg, rgba(245,200,76,.15), rgba(122,92,255,.2));
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow: var(--shadow-soft);
+    }
+    .brand h1{ font-size:14px;margin:0;letter-spacing:.4px; }
+    .brand p{ margin:2px 0 0; font-size:12px;color:var(--muted); }
+
+    .nav{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:10px;
+    }
+    .nav a{
+      text-decoration:none;
+      color:var(--muted);
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid transparent;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      transition:.18s ease;
+    }
+    .nav a:hover{
+      background: rgba(255,255,255,.04);
+      border-color: rgba(255,255,255,.08);
+      color:var(--text);
+    }
+    .nav a.active{
+      background: linear-gradient(135deg, rgba(122,92,255,.22), rgba(245,200,76,.10));
+      border-color: rgba(122,92,255,.28);
+      color:var(--text);
+    }
+    .badge{
+      font-size:11px;
+      color:var(--text);
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+    }
+
+    .sidebar .footer{
+      margin-top:18px;
+      padding:12px 10px;
+      border-top:1px solid var(--border);
+      color:var(--muted-2);
+      font-size:12px;
+    }
+
+    /* Main */
+    .main{ padding:20px 22px 40px; }
+
+    .topbar{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:16px;
+    }
+    .title{ display:flex; flex-direction:column; gap:4px; }
+    .title h2{ margin:0; font-size:18px; letter-spacing:.2px; }
+    .title span{ color:var(--muted); font-size:12px; }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:12px;
+    }
+    select, button{ font-family:inherit; }
+    .select{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none;
+      font-size:12px;
+    }
+    .btn{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition:.15s ease;
+      font-size:12px;
+    }
+    .btn:hover{ transform: translateY(-1px); background: rgba(255,255,255,.06);}
+    .btn.primary{
+      border-color: rgba(122,92,255,.35);
+      background: linear-gradient(135deg, rgba(122,92,255,.35), rgba(245,200,76,.15));
+    }
+
+    .grid{ display:grid; gap:14px; }
+
+    /* KPI row */
+    .kpis{ grid-template-columns: repeat(6, minmax(170px, 1fr)); }
+
+    .card{
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17,28,58,.85), rgba(15,23,48,.65));
+      box-shadow: var(--shadow-soft);
+      overflow:hidden;
+      position:relative;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-1px -1px auto -1px;
+      height:2px;
+      background: linear-gradient(90deg, rgba(122,92,255,.7), rgba(245,200,76,.6), rgba(46,229,157,.55));
+      opacity:.65;
+    }
+    .card .hd{
+      padding:12px 14px 0;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .card .hd .lbl{ font-size:12px; color:var(--muted); letter-spacing:.25px; }
+    .card .hd .tag{
+      font-size:11px;
+      color:var(--muted);
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      white-space:nowrap;
+    }
+    .card .bd{ padding:10px 14px 14px; }
+
+    .metric{
+      display:flex;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .metric .val{ font-size:22px; font-weight:700; letter-spacing:.2px; }
+    .metric .delta{
+      font-size:12px;
+      padding:4px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      white-space:nowrap;
+    }
+    .delta.up{ color: var(--green); border-color: rgba(46,229,157,.25); background: rgba(46,229,157,.08); }
+    .delta.down{ color: var(--red); border-color: rgba(255,77,109,.25); background: rgba(255,77,109,.08); }
+
+    .spark-wrap{
+      margin-top:10px;
+      height:36px;
+    }
+
+    /* charts row */
+    .row2{ grid-template-columns: 1.4fr 1fr; align-items:stretch; }
+
+    .chart{ padding:14px; }
+    .chart .title{
+      display:flex;
+      flex-direction:row;
+      align-items:baseline;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .chart .title h3{ margin:0; font-size:14px; letter-spacing:.2px; }
+    .chart .title span{ color:var(--muted); font-size:12px; }
+
+    .chartbox{
+      height:240px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(8,12,25,.22);
+      padding:10px;
+    }
+    .chartbox canvas{ width:100% !important; height:100% !important; }
+
+    /* tables row */
+    .row3{ grid-template-columns: 1.25fr 1fr; }
+
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      overflow:hidden;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(8,12,25,.25);
+    }
+    th, td{
+      padding:10px 10px;
+      font-size:12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      color:var(--muted);
+      text-align:left;
+      white-space:nowrap;
+    }
+    th{
+      color:rgba(231,236,255,.78);
+      font-weight:600;
+      background: rgba(255,255,255,.03);
+    }
+    tr:last-child td{ border-bottom:none; }
+    td strong{ color:var(--text); font-weight:600; }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid rgba(255,255,255,.12);
+      color:var(--muted);
+      background: rgba(255,255,255,.03);
+    }
+    .dot{ width:8px;height:8px;border-radius:99px; display:inline-block;}
+    .ok .dot{ background: var(--green); }
+    .warn .dot{ background: var(--yellow); }
+    .bad .dot{ background: var(--red); }
+
+    .row4{ grid-template-columns: 1fr 1fr; }
+
+    .alerts{ padding:14px; }
+    .alert{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+      margin-bottom:10px;
+    }
+    .alert:last-child{ margin-bottom:0; }
+    .alert .left{ display:flex; gap:10px; align-items:flex-start; }
+    .sev{
+      width:34px;height:34px;
+      border-radius:12px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      flex:0 0 auto;
+    }
+    .sev.s1{ border-color: rgba(255,77,109,.28); background: rgba(255,77,109,.10); }
+    .sev.s2{ border-color: rgba(255,211,77,.28); background: rgba(255,211,77,.10); }
+    .sev.s3{ border-color: rgba(46,229,157,.22); background: rgba(46,229,157,.08); }
+
+    .alert .msg h4{
+      margin:0 0 4px;
+      font-size:12px;
+      color:var(--text);
+      font-weight:650;
+    }
+    .alert .msg p{
+      margin:0;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.25rem;
+    }
+    .alert .meta{ color:var(--muted-2); font-size:11px; white-space:nowrap; margin-top:2px; }
+
+    /* widgets drag-and-drop */
+    .widget{
+      cursor: grab;
+      transition: transform .12s ease, opacity .12s ease, box-shadow .12s ease;
+    }
+    .widget.dragging{
+      opacity:.55;
+      transform: scale(.99);
+      cursor: grabbing;
+    }
+    .dropzone{
+      min-height: 60px;
+      border-radius: 14px;
+    }
+    .dropzone.drag-over{
+      outline:1px dashed rgba(122,92,255,.55);
+      outline-offset:6px;
+    }
+    .row5{ grid-template-columns: 1fr; }
+    .settings-list{
+      display:grid;
+      gap:8px;
+    }
+    .settings-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(255,255,255,.03);
+      font-size:12px;
+      color:var(--muted);
+    }
+    .settings-item strong{
+      color:var(--text);
+      font-weight:600;
+    }
+
+    /* responsive */
+    @media (max-width: 1200px){
+      .kpis{ grid-template-columns: repeat(3, minmax(180px, 1fr)); }
+      .row2{ grid-template-columns: 1fr; }
+      .row3{ grid-template-columns: 1fr; }
+      .row4{ grid-template-columns: 1fr; }
+    }
+    @media (max-width: 860px){
+      .app{ grid-template-columns: 1fr; }
+      .sidebar{ position:relative; height:auto; }
+      .kpis{ grid-template-columns: repeat(2, minmax(160px, 1fr)); }
+    }
+    @media (max-width: 460px){
+      .kpis{ grid-template-columns: 1fr; }
+      .actions{ justify-content:flex-start; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visão Operação + Cliente</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a class="active" href="#"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a href="#"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="#"><span>Games</span><span class="badge">842</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="#"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="#"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="#" id="navSettings"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+
+      <div class="footer">
+        <div style="margin-bottom:6px;">Perfil: <strong style="color:var(--text)">Operação Interna</strong></div>
+        <div>Filtro atual: <span style="color:var(--text)">Todos os clientes</span></div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Dashboard</h2>
+          <span>Mockup funcional com Chart.js — dados de exemplo</span>
+        </div>
+
+        <div class="actions">
+          <span class="pill">🕒 Atualiza a cada <strong style="color:var(--text)">30s</strong></span>
+
+          <select class="select" id="profileSelect" aria-label="Perfil">
+            <option value="igp" selected>Operação Interna (iGP)</option>
+            <option value="client">Cliente (Operadora)</option>
+          </select>
+
+          <select class="select" id="periodSelect" aria-label="Período">
+            <option value="today" selected>Hoje</option>
+            <option value="24h">Últimas 24 horas</option>
+            <option value="7d">Últimos 7 dias</option>
+            <option value="30d">Últimos 30 dias</option>
+          </select>
+
+          <select class="select" id="clientSelect" aria-label="Cliente">
+            <option value="all" selected>Todos os Clientes</option>
+            <option value="a">Operadora A</option>
+            <option value="b">Operadora B</option>
+            <option value="c">Operadora C</option>
+          </select>
+
+          <button class="btn primary" id="btnRandomize">Randomizar Dados</button>
+          <button class="btn" id="btnReset">Reset</button>
+          <button class="btn" id="btnThemeToggle">Tema: Escuro</button>
+        </div>
+      </div>
+
+      <section class="card chart settings-panel" id="settingsPanel" style="display:none; margin-bottom:14px;">
+        <div class="title">
+          <h3>Configurações de Widgets</h3>
+          <span>ative ou desative cada widget do dashboard</span>
+        </div>
+        <div id="widgetSettingsList"></div>
+      </section>
+
+      <!-- KPI row -->
+      <section class="grid kpis">
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">👥 Jogadores Online</div>
+            <div class="tag">agora</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiOnline">219</div>
+              <div class="delta up" id="kpiOnlineDelta">+8% vs ontem</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkOnline"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">🎰 Sessões Ativas</div>
+            <div class="tag">agora</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiSessions">1.304</div>
+              <div class="delta up" id="kpiSessionsDelta">+3%</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkSessions"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">💰 Coin-In (Hoje)</div>
+            <div class="tag">financeiro</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiCoinIn">R$ 48.220</div>
+              <div class="delta up" id="kpiCoinInDelta">+18%</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkCoinIn"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">📤 Coin-Out (Hoje)</div>
+            <div class="tag">financeiro</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiCoinOut">R$ 44.102</div>
+              <div class="delta down" id="kpiCoinOutDelta">+22% payout</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkCoinOut"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">🟣 GGR (Hoje)</div>
+            <div class="tag">Coin-In − Coin-Out</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiGgr">R$ 4.118</div>
+              <div class="delta up" id="kpiGgrDelta">+6%</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkGgr"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="hd">
+            <div class="lbl">📊 RTP Real (Hoje)</div>
+            <div class="tag">risco</div>
+          </div>
+          <div class="bd">
+            <div class="metric">
+              <div class="val" id="kpiRtp">95,4%</div>
+              <div class="delta" id="kpiRtpDelta">ok</div>
+            </div>
+            <div class="spark-wrap">
+              <canvas id="sparkRtp"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts -->
+      <section class="grid row2" style="margin-top:14px;">
+        <div class="card chart">
+          <div class="title">
+            <h3>📈 Coin-In (últimas 24h)</h3>
+            <span>tendência por hora</span>
+          </div>
+          <div class="chartbox">
+            <canvas id="chartCoinIn24h"></canvas>
+          </div>
+        </div>
+
+        <div class="card chart">
+          <div class="title">
+            <h3>🎮 Top Jogos (share de Coin-In)</h3>
+            <span>últimas 24h</span>
+          </div>
+          <div class="chartbox">
+            <canvas id="chartTopGames"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid row3" style="margin-top:14px;">
+        <div class="card chart">
+          <div class="title">
+            <h3>👥 Jogadores Online (últimas 24h)</h3>
+            <span>concurrency</span>
+          </div>
+          <div class="chartbox">
+            <canvas id="chartOnline24h"></canvas>
+          </div>
+        </div>
+
+        <div class="card chart">
+          <div class="title">
+            <h3>💼 Coin-In por Operadora</h3>
+            <span>comparativo (24h)</span>
+          </div>
+          <div class="chartbox">
+            <canvas id="chartCoinInByOp"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tables -->
+      <section class="grid row4" style="margin-top:14px;">
+        <div class="card chart">
+          <div class="title">
+            <h3>🏆 Últimos Jackpots</h3>
+            <span>pagamentos recentes</span>
+          </div>
+
+          <table aria-label="Jackpots">
+            <thead>
+              <tr><th>Jogo</th><th>Data</th><th>Valor</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><strong>Multibingo OL</strong></td><td>27/02/2026</td><td>R$ 3.800,17</td></tr>
+              <tr><td><strong>Six Bingo SD</strong></td><td>10/02/2026</td><td>R$ 201,18</td></tr>
+              <tr><td><strong>Gol Mania OL</strong></td><td>04/02/2026</td><td>R$ 4.409,04</td></tr>
+              <tr><td><strong>Multibingo OL</strong></td><td>02/02/2026</td><td>R$ 2.465,39</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card chart">
+          <div class="title">
+            <h3>🧩 Status das Integrações</h3>
+            <span>saúde / latência</span>
+          </div>
+
+          <table aria-label="Integrações">
+            <thead>
+              <tr><th>Integrador</th><th>Status</th><th>Latência</th><th>Última req.</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Alea</strong></td>
+                <td><span class="status ok"><span class="dot"></span>Online</span></td>
+                <td>120ms</td>
+                <td>há 6s</td>
+              </tr>
+              <tr>
+                <td><strong>EveryMatrix</strong></td>
+                <td><span class="status ok"><span class="dot"></span>Online</span></td>
+                <td>98ms</td>
+                <td>há 11s</td>
+              </tr>
+              <tr>
+                <td><strong>BetSW3</strong></td>
+                <td><span class="status warn"><span class="dot"></span>Instável</span></td>
+                <td>320ms</td>
+                <td>há 34s</td>
+              </tr>
+              <tr>
+                <td><strong>Wintech</strong></td>
+                <td><span class="status bad"><span class="dot"></span>Offline</span></td>
+                <td>—</td>
+                <td>há 12min</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Alerts -->
+      <section class="card alerts" style="margin-top:14px;">
+        <div class="title" style="margin: 4px 0 12px;">
+          <h3>🚨 Alertas & Anomalias</h3>
+          <span>o que precisa de atenção agora</span>
+        </div>
+
+        <div class="alert">
+          <div class="left">
+            <div class="sev s1">S1</div>
+            <div class="msg">
+              <h4>Integrador Wintech sem tráfego</h4>
+              <p>Sem requests há 12 minutos. Impacto potencial em launch/bet/result.</p>
+              <div class="meta">Ação sugerida: verificar rota, firewall, credenciais e healthcheck.</div>
+            </div>
+          </div>
+          <div class="meta">há 2 min</div>
+        </div>
+
+        <div class="alert">
+          <div class="left">
+            <div class="sev s2">S2</div>
+            <div class="msg">
+              <h4>RTP acima do normal — Fortune Tiger</h4>
+              <p>RTP real 103% nas últimas 2h (baseline 96,5%). Pode ser variância ou anomalia.</p>
+              <div class="meta">Ação sugerida: checar distribuição de ganhos e eventos incomuns.</div>
+            </div>
+          </div>
+          <div class="meta">há 8 min</div>
+        </div>
+
+        <div class="alert">
+          <div class="left">
+            <div class="sev s3">S3</div>
+            <div class="msg">
+              <h4>Latência elevada — BetSW3</h4>
+              <p>p95 subiu para 320ms (normal ~120ms). Pode afetar UX em horários de pico.</p>
+              <div class="meta">Ação sugerida: revisar logs, rate-limit e status do provedor.</div>
+            </div>
+          </div>
+          <div class="meta">há 15 min</div>
+        </div>
+      </section>
+
+      <div style="margin-top:14px;color:var(--muted-2);font-size:12px;">
+        Dica: para usar com seus dados reais, substitua os arrays em <code>state</code> e chame <code>renderAll()</code>.
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // ---------- Helpers ----------
+    const fmtBRL = (n) => "R$ " + n.toLocaleString("pt-BR", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const fmtPct = (n) => n.toLocaleString("pt-BR", { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + "%";
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+
+    function mulberry32(seed) {
+      // deterministic RNG (pra reset previsível)
+      return function() {
+        let t = seed += 0x6D2B79F5;
+        t = Math.imul(t ^ t >>> 15, t | 1);
+        t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+        return ((t ^ t >>> 14) >>> 0) / 4294967296;
+      }
+    }
+
+    function makeHoursLabels() {
+      // últimas 24 horas, label "00h..23h"
+      const labels = [];
+      for (let i = 0; i < 24; i++) labels.push(String(i).padStart(2,"0")+"h");
+      return labels;
+    }
+
+    function genSeries({ base, volatility, min=0, max=Infinity, seed=7 }) {
+      const rnd = mulberry32(seed);
+      const arr = [];
+      let v = base;
+      for (let i=0;i<24;i++){
+        // variação + leve tendência
+        const noise = (rnd() - 0.5) * volatility;
+        const drift = (i>10 && i<18) ? volatility*0.08 : 0; // pico no meio do dia
+        v = v + noise + drift;
+        v = clamp(v, min, max);
+        arr.push(Math.round(v));
+      }
+      return arr;
+    }
+
+    // ---------- State (dados fake) ----------
+    const defaultState = () => {
+      const coinIn24 = genSeries({ base: 1900, volatility: 420, min: 600, max: 3200, seed: 11 });
+      const online24 = genSeries({ base: 210, volatility: 55, min: 60, max: 420, seed: 21 });
+
+      // coin-out como % do coin-in com variação
+      const rnd = mulberry32(31);
+      const coinOut24 = coinIn24.map(v => Math.round(v * (0.90 + rnd()*0.10))); // 90% a 100%
+
+      const sum = (a) => a.reduce((x,y)=>x+y,0);
+      const coinInToday = sum(coinIn24);
+      const coinOutToday = sum(coinOut24);
+      const ggrToday = coinInToday - coinOutToday;
+      const rtpToday = coinInToday > 0 ? (coinOutToday / coinInToday) * 100 : 0;
+
+      // sessões aproximadas correlacionadas com online
+      const sessionsActive = Math.round(online24[online24.length-1] * 6.0);
+      const playersOnline = online24[online24.length-1];
+
+      // top games share (somando 100)
+      const gameLabels = ["Show Ball 3", "Pharaos", "Fortune Tiger", "Fortune Dragon", "Fortune Rabbit"];
+      const shares = [32, 24, 18, 14, 12];
+
+      // operadoras coin-in
+      const ops = ["BetSW3","Alea","EveryMatrix","Wintech"];
+      const opCoinIn = [
+        Math.round(coinInToday * 0.24),
+        Math.round(coinInToday * 0.21),
+        Math.round(coinInToday * 0.19),
+        Math.round(coinInToday * 0.11)
+      ];
+
+      return {
+        labels24h: makeHoursLabels(),
+        coinIn24,
+        coinOut24,
+        online24,
+        playersOnline,
+        sessionsActive,
+        coinInToday,
+        coinOutToday,
+        ggrToday,
+        rtpToday,
+        gameLabels,
+        gameShares: shares,
+        ops,
+        opCoinIn
+      };
+    };
+
+    let state = defaultState();
+
+    // ---------- Chart.js defaults (dark) ----------
+    Chart.defaults.font.family = getComputedStyle(document.documentElement).getPropertyValue("--font").trim() || undefined;
+    Chart.defaults.plugins.legend.labels.boxWidth = 10;
+    Chart.defaults.plugins.legend.labels.boxHeight = 10;
+
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    let gridColor = "rgba(255,255,255,.08)";
+    let tickColor = "rgba(231,236,255,.55)";
+    let titleColor = "rgba(231,236,255,.85)";
+    let baseScales = {};
+
+    function refreshChartTheme() {
+      const cs = getComputedStyle(document.body);
+      gridColor = cs.getPropertyValue("--chart-grid").trim() || "rgba(255,255,255,.08)";
+      tickColor = cs.getPropertyValue("--chart-tick").trim() || "rgba(231,236,255,.55)";
+      titleColor = cs.getPropertyValue("--chart-text").trim() || "rgba(231,236,255,.85)";
+
+      Chart.defaults.color = titleColor;
+      baseScales = {
+        x: {
+          grid: { color: gridColor },
+          ticks: { color: tickColor, maxRotation: 0, autoSkip: true },
+          border: { color: gridColor }
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: { color: tickColor },
+          border: { color: gridColor }
+        }
+      };
+    }
+
+    // ---------- Charts instances ----------
+    const charts = {};
+    const LAYOUT_KEY = "igp-dashboard-layout-v1";
+    const WIDGET_VISIBILITY_KEY = "igp-dashboard-widget-visibility-v1";
+
+    function getSavedTheme() {
+      return localStorage.getItem(THEME_KEY) || "dark";
+    }
+
+    function setTheme(theme, shouldRender = true) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      refreshChartTheme();
+      updateThemeButtonLabel();
+      if (shouldRender) renderAll();
+    }
+
+    function updateThemeButtonLabel() {
+      const btn = document.getElementById("btnThemeToggle");
+      if (!btn) return;
+      const isLight = document.body.classList.contains("light-theme");
+      btn.textContent = isLight ? "Tema: Claro" : "Tema: Escuro";
+    }
+
+    function initThemeToggle() {
+      const btn = document.getElementById("btnThemeToggle");
+      if (!btn) return;
+      btn.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+      setTheme(getSavedTheme(), false);
+    }
+
+    function makeLineChart(canvasId, labels, data, options = {}) {
+      const ctx = document.getElementById(canvasId);
+      return new Chart(ctx, {
+        type: "line",
+        data: {
+          labels,
+          datasets: [{
+            label: options.label || "",
+            data,
+            borderWidth: 2,
+            pointRadius: 0,
+            tension: 0.35,
+            fill: false
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: !!options.showLegend },
+            tooltip: { intersect: false, mode: "index" },
+            title: { display: false }
+          },
+          scales: options.scales || baseScales
+        }
+      });
+    }
+
+    function makeBarChart(canvasId, labels, data) {
+      const ctx = document.getElementById(canvasId);
+      return new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels,
+          datasets: [{
+            label: "Coin-In",
+            data,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: { mode: "index", intersect: false }
+          },
+          scales: baseScales
+        }
+      });
+    }
+
+    function makeDoughnut(canvasId, labels, data) {
+      const ctx = document.getElementById(canvasId);
+      return new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels,
+          datasets: [{
+            data,
+            borderWidth: 1,
+            hoverOffset: 6,
+            cutout: "60%"
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { color: tickColor }
+            },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.label}: ${c.raw}%`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function destroyIfExists(key){
+      if (charts[key]) { charts[key].destroy(); delete charts[key]; }
+    }
+
+    // ---------- Render KPIs ----------
+    function setDelta(el, valueText, direction /* up|down|neutral */){
+      el.textContent = valueText;
+      el.classList.remove("up","down");
+      if (direction === "up") el.classList.add("up");
+      if (direction === "down") el.classList.add("down");
+    }
+
+    function renderKPIs(){
+      document.getElementById("kpiOnline").textContent = state.playersOnline.toLocaleString("pt-BR");
+      document.getElementById("kpiSessions").textContent = state.sessionsActive.toLocaleString("pt-BR");
+      document.getElementById("kpiCoinIn").textContent = fmtBRL(state.coinInToday);
+      document.getElementById("kpiCoinOut").textContent = fmtBRL(state.coinOutToday);
+      document.getElementById("kpiGgr").textContent = fmtBRL(state.ggrToday);
+      document.getElementById("kpiRtp").textContent = fmtPct(state.rtpToday);
+
+      // deltas fake só pra visual
+      const rnd = mulberry32(101);
+      setDelta(document.getElementById("kpiOnlineDelta"), `${Math.round(rnd()*12)+1}% vs ontem`, "up");
+      setDelta(document.getElementById("kpiSessionsDelta"), `${Math.round(rnd()*8)+1}%`, "up");
+      setDelta(document.getElementById("kpiCoinInDelta"), `${Math.round(rnd()*25)+1}%`, "up");
+      setDelta(document.getElementById("kpiCoinOutDelta"), `${Math.round(rnd()*30)+1}% payout`, "down");
+      setDelta(document.getElementById("kpiGgrDelta"), `${Math.round(rnd()*12)+1}%`, state.ggrToday >= 0 ? "up" : "down");
+
+      const rtpDelta = document.getElementById("kpiRtpDelta");
+      const rtp = state.rtpToday;
+      // regra simples: <92 bom, 92-98 ok, >98 atenção (ajuste conforme sua baseline)
+      let label = "ok";
+      if (rtp < 92) label = "bom";
+      if (rtp > 98) label = "atenção";
+      rtpDelta.textContent = label;
+    }
+
+    // ---------- Render all charts ----------
+    function renderSparks(){
+      // spark charts: mini-linhas (sem eixos)
+      const sparkOpts = {
+        scales: {
+          x: { display:false, grid:{display:false}, border:{display:false} },
+          y: { display:false, grid:{display:false}, border:{display:false} }
+        }
+      };
+
+      destroyIfExists("sparkOnline");
+      charts.sparkOnline = makeLineChart("sparkOnline", state.labels24h, state.online24, sparkOpts);
+
+      destroyIfExists("sparkSessions");
+      const sessionsSeries = state.online24.map(v => Math.round(v*6.0));
+      charts.sparkSessions = makeLineChart("sparkSessions", state.labels24h, sessionsSeries, sparkOpts);
+
+      destroyIfExists("sparkCoinIn");
+      charts.sparkCoinIn = makeLineChart("sparkCoinIn", state.labels24h, state.coinIn24, sparkOpts);
+
+      destroyIfExists("sparkCoinOut");
+      charts.sparkCoinOut = makeLineChart("sparkCoinOut", state.labels24h, state.coinOut24, sparkOpts);
+
+      destroyIfExists("sparkGgr");
+      const ggr24 = state.coinIn24.map((v,i)=>v - state.coinOut24[i]);
+      charts.sparkGgr = makeLineChart("sparkGgr", state.labels24h, ggr24, sparkOpts);
+
+      destroyIfExists("sparkRtp");
+      const rtp24 = state.coinIn24.map((v,i)=> v > 0 ? (state.coinOut24[i]/v)*100 : 0).map(x=>Math.round(x*10)/10);
+      charts.sparkRtp = makeLineChart("sparkRtp", state.labels24h, rtp24, sparkOpts);
+    }
+
+    function renderMainCharts(){
+      destroyIfExists("coinIn24h");
+      charts.coinIn24h = makeLineChart("chartCoinIn24h", state.labels24h, state.coinIn24, { showLegend:false });
+
+      destroyIfExists("topGames");
+      charts.topGames = makeDoughnut("chartTopGames", state.gameLabels, state.gameShares);
+
+      destroyIfExists("online24h");
+      charts.online24h = makeLineChart("chartOnline24h", state.labels24h, state.online24, { showLegend:false });
+
+      destroyIfExists("coinInByOp");
+      charts.coinInByOp = makeBarChart("chartCoinInByOp", state.ops, state.opCoinIn);
+    }
+
+    function renderAll(){
+      renderKPIs();
+      renderSparks();
+      renderMainCharts();
+    }
+
+    // ---------- Widget DnD / layout ----------
+    function ensureDropZonesAndWidgets() {
+      const kpiZone = document.querySelector(".kpis");
+      const row2Zone = document.querySelector(".row2");
+      const row3Zone = document.querySelector(".row3");
+      const row4Zone = document.querySelector(".row4");
+
+      if (kpiZone) { kpiZone.classList.add("dropzone"); kpiZone.id = "zone-kpis"; }
+      if (row2Zone) { row2Zone.classList.add("dropzone"); row2Zone.id = "zone-row2"; }
+      if (row3Zone) { row3Zone.classList.add("dropzone"); row3Zone.id = "zone-row3"; }
+      if (row4Zone) { row4Zone.classList.add("dropzone"); row4Zone.id = "zone-row4"; }
+
+      // cria uma zona dedicada para o card de alertas
+      const alertsCard = document.querySelector(".main > section.card.alerts");
+      if (alertsCard && !alertsCard.parentElement.classList.contains("dropzone")) {
+        const row5 = document.createElement("section");
+        row5.className = "grid row5 dropzone";
+        row5.id = "zone-row5";
+        row5.style.marginTop = "14px";
+        alertsCard.parentElement.insertBefore(row5, alertsCard);
+        row5.appendChild(alertsCard);
+      }
+
+      const zones = Array.from(document.querySelectorAll(".dropzone"));
+      let widgetIndex = 1;
+      zones.forEach(zone => {
+        Array.from(zone.children).forEach(card => {
+          if (!card.classList.contains("card")) return;
+          card.classList.add("widget");
+          if (!card.dataset.widgetId) {
+            card.dataset.widgetId = `widget-${widgetIndex++}`;
+          }
+          if (!card.dataset.widgetTitle) {
+            const titleFromKpi = card.querySelector(".hd .lbl");
+            const titleFromChart = card.querySelector(".title h3");
+            const titleFromAlert = card.querySelector(".title h3");
+            const rawTitle = (titleFromKpi?.textContent || titleFromChart?.textContent || titleFromAlert?.textContent || card.dataset.widgetId || "").trim();
+            card.dataset.widgetTitle = rawTitle.replace(/\s+/g, " ");
+          }
+        });
+      });
+    }
+
+    function getDropZones() {
+      return Array.from(document.querySelectorAll(".dropzone"));
+    }
+
+    function getDirectWidgets(zone) {
+      return Array.from(zone.children).filter(el => el.classList.contains("widget"));
+    }
+
+    function saveLayout() {
+      const layout = {};
+      getDropZones().forEach(zone => {
+        layout[zone.id] = getDirectWidgets(zone).map(w => w.dataset.widgetId);
+      });
+      localStorage.setItem(LAYOUT_KEY, JSON.stringify(layout));
+    }
+
+    function restoreLayout() {
+      const raw = localStorage.getItem(LAYOUT_KEY);
+      if (!raw) return;
+
+      let layout;
+      try { layout = JSON.parse(raw); }
+      catch { return; }
+
+      const allWidgets = Array.from(document.querySelectorAll(".widget[data-widget-id]"));
+      const byId = new Map(allWidgets.map(w => [w.dataset.widgetId, w]));
+      const placed = new Set();
+
+      getDropZones().forEach(zone => {
+        const ids = Array.isArray(layout[zone.id]) ? layout[zone.id] : [];
+        ids.forEach(id => {
+          const el = byId.get(id);
+          if (!el || placed.has(id)) return;
+          zone.appendChild(el);
+          placed.add(id);
+        });
+      });
+
+      // fallback para widgets novos ou ids ausentes no storage
+      const fallback = document.getElementById("zone-kpis");
+      if (fallback) {
+        allWidgets.forEach(w => {
+          if (!placed.has(w.dataset.widgetId)) fallback.appendChild(w);
+        });
+      }
+    }
+
+    function resetLayout() {
+      localStorage.removeItem(LAYOUT_KEY);
+      location.reload();
+    }
+
+    function addResetLayoutButton() {
+      const actions = document.querySelector(".actions");
+      if (!actions || document.getElementById("btnResetLayout")) return;
+
+      const btn = document.createElement("button");
+      btn.className = "btn";
+      btn.id = "btnResetLayout";
+      btn.textContent = "Reset Layout";
+      btn.addEventListener("click", resetLayout);
+      actions.appendChild(btn);
+    }
+
+    function initWidgetDnD() {
+      let dragging = null;
+      const zones = getDropZones();
+      const widgets = Array.from(document.querySelectorAll(".widget"));
+
+      widgets.forEach(widget => {
+        widget.setAttribute("draggable", "true");
+
+        widget.addEventListener("dragstart", (e) => {
+          dragging = widget;
+          widget.classList.add("dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", widget.dataset.widgetId || "");
+        });
+
+        widget.addEventListener("dragend", () => {
+          widget.classList.remove("dragging");
+          zones.forEach(z => z.classList.remove("drag-over"));
+          if (dragging) saveLayout();
+          dragging = null;
+        });
+
+        widget.addEventListener("dragover", (e) => {
+          if (!dragging || dragging === widget) return;
+          e.preventDefault();
+          const rect = widget.getBoundingClientRect();
+          const before = e.clientY < rect.top + rect.height / 2;
+          widget.parentElement.insertBefore(dragging, before ? widget : widget.nextSibling);
+        });
+      });
+
+      zones.forEach(zone => {
+        zone.addEventListener("dragover", (e) => {
+          if (!dragging) return;
+          e.preventDefault();
+          zone.classList.add("drag-over");
+        });
+
+        zone.addEventListener("dragleave", () => {
+          zone.classList.remove("drag-over");
+        });
+
+        zone.addEventListener("drop", (e) => {
+          if (!dragging) return;
+          e.preventDefault();
+          zone.classList.remove("drag-over");
+          if (e.target === zone) zone.appendChild(dragging);
+          saveLayout();
+        });
+      });
+    }
+
+    function loadWidgetVisibility() {
+      const raw = localStorage.getItem(WIDGET_VISIBILITY_KEY);
+      if (!raw) return {};
+      try { return JSON.parse(raw) || {}; }
+      catch { return {}; }
+    }
+
+    function saveWidgetVisibility(map) {
+      localStorage.setItem(WIDGET_VISIBILITY_KEY, JSON.stringify(map));
+    }
+
+    function getAllWidgets() {
+      return Array.from(document.querySelectorAll(".widget[data-widget-id]"));
+    }
+
+    function applyWidgetVisibility(map) {
+      getAllWidgets().forEach(widget => {
+        const id = widget.dataset.widgetId;
+        const visible = map[id] !== false;
+        widget.style.display = visible ? "" : "none";
+      });
+    }
+
+    function buildWidgetSettingsPanel() {
+      const list = document.getElementById("widgetSettingsList");
+      if (!list) return;
+
+      const visibility = loadWidgetVisibility();
+      list.className = "settings-list";
+      list.innerHTML = "";
+
+      getAllWidgets().forEach(widget => {
+        const id = widget.dataset.widgetId;
+        const label = widget.dataset.widgetTitle || id;
+        const isVisible = visibility[id] !== false;
+
+        const row = document.createElement("label");
+        row.className = "settings-item";
+
+        const text = document.createElement("strong");
+        text.textContent = label;
+
+        const toggle = document.createElement("input");
+        toggle.type = "checkbox";
+        toggle.checked = isVisible;
+        toggle.addEventListener("change", () => {
+          visibility[id] = toggle.checked;
+          saveWidgetVisibility(visibility);
+          applyWidgetVisibility(visibility);
+          renderAll();
+        });
+
+        row.appendChild(text);
+        row.appendChild(toggle);
+        list.appendChild(row);
+      });
+
+      applyWidgetVisibility(visibility);
+    }
+
+    function initSettingsTab() {
+      const navSettings = document.getElementById("navSettings");
+      const settingsPanel = document.getElementById("settingsPanel");
+      if (!navSettings || !settingsPanel) return;
+
+      navSettings.addEventListener("click", (e) => {
+        e.preventDefault();
+        const opening = settingsPanel.style.display === "none";
+        settingsPanel.style.display = opening ? "" : "none";
+        if (opening) {
+          buildWidgetSettingsPanel();
+          settingsPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      });
+    }
+
+    // ---------- Controls ----------
+    function randomizeData(){
+      // muda seed e gera novo estado
+      const seed = Math.floor(Math.random()*100000) + 1;
+      const coinIn24 = genSeries({ base: 1700 + (seed%600), volatility: 380 + (seed%250), min: 500, max: 3800, seed });
+      const online24 = genSeries({ base: 170 + (seed%120), volatility: 45 + (seed%35), min: 50, max: 520, seed: seed+7 });
+
+      const rnd = mulberry32(seed+13);
+      const coinOut24 = coinIn24.map(v => Math.round(v * (0.88 + rnd()*0.14)));
+
+      const sum = (a) => a.reduce((x,y)=>x+y,0);
+      const coinInToday = sum(coinIn24);
+      const coinOutToday = sum(coinOut24);
+      const ggrToday = coinInToday - coinOutToday;
+      const rtpToday = coinInToday > 0 ? (coinOutToday / coinInToday) * 100 : 0;
+
+      const playersOnline = online24[online24.length-1];
+      const sessionsActive = Math.round(playersOnline * (5.3 + (seed%12)/10));
+
+      // top games share
+      const gameLabels = ["Show Ball 3", "Pharaos", "Fortune Tiger", "Fortune Dragon", "Fortune Rabbit"];
+      let raw = gameLabels.map((_,i)=> Math.max(5, Math.round((mulberry32(seed+i)()*40)+10)));
+      const total = raw.reduce((a,b)=>a+b,0);
+      const shares = raw.map(v => Math.round((v/total)*100));
+      // ajusta para somar 100
+      const diff = 100 - shares.reduce((a,b)=>a+b,0);
+      shares[0] += diff;
+
+      const ops = ["BetSW3","Alea","EveryMatrix","Wintech"];
+      const opCoinIn = [
+        Math.round(coinInToday * (0.20 + rnd()*0.10)),
+        Math.round(coinInToday * (0.18 + rnd()*0.10)),
+        Math.round(coinInToday * (0.15 + rnd()*0.10)),
+        Math.round(coinInToday * (0.08 + rnd()*0.06))
+      ];
+
+      state = {
+        labels24h: makeHoursLabels(),
+        coinIn24,
+        coinOut24,
+        online24,
+        playersOnline,
+        sessionsActive,
+        coinInToday,
+        coinOutToday,
+        ggrToday,
+        rtpToday,
+        gameLabels,
+        gameShares: shares,
+        ops,
+        opCoinIn
+      };
+
+      renderAll();
+    }
+
+    function reset(){
+      state = defaultState();
+      renderAll();
+    }
+
+    document.getElementById("btnRandomize").addEventListener("click", randomizeData);
+    document.getElementById("btnReset").addEventListener("click", reset);
+
+    // (mock) mudanças de filtro: aqui só re-renderiza (você ligaria ao backend)
+    ["profileSelect","periodSelect","clientSelect"].forEach(id => {
+      document.getElementById(id).addEventListener("change", () => {
+        // no real: chamar API com filtros e atualizar state
+        renderAll();
+      });
+    });
+
+    // ---------- Init ----------
+    ensureDropZonesAndWidgets();
+    restoreLayout();
+    addResetLayoutButton();
+    initThemeToggle();
+    initWidgetDnD();
+    initSettingsTab();
+    buildWidgetSettingsPanel();
+    renderAll();
+
+    // Atualização automática (mock)
+    setInterval(() => {
+      // em produção: puxar métricas novas via API e atualizar state (ou websocket)
+      // aqui: só dá uma leve mexida nos dados
+      const lastOnline = state.playersOnline;
+      const bump = (Math.random() - 0.5) * 12;
+      state.playersOnline = Math.round(clamp(lastOnline + bump, 40, 600));
+      state.sessionsActive = Math.round(state.playersOnline * 6);
+
+      // shift nos arrays (simula streaming)
+      const shiftAndPush = (arr, next) => { arr.shift(); arr.push(next); };
+      const nextOnline = Math.round(clamp(state.playersOnline + (Math.random()-0.5)*20, 40, 600));
+      shiftAndPush(state.online24, nextOnline);
+
+      const lastCoinIn = state.coinIn24[state.coinIn24.length-1];
+      const nextCoinIn = Math.round(clamp(lastCoinIn + (Math.random()-0.5)*400, 400, 4200));
+      shiftAndPush(state.coinIn24, nextCoinIn);
+
+      const nextCoinOut = Math.round(nextCoinIn * (0.88 + Math.random()*0.14));
+      shiftAndPush(state.coinOut24, nextCoinOut);
+
+      // recalcula totais
+      const sum = (a) => a.reduce((x,y)=>x+y,0);
+      state.coinInToday = sum(state.coinIn24);
+      state.coinOutToday = sum(state.coinOut24);
+      state.ggrToday = state.coinInToday - state.coinOutToday;
+      state.rtpToday = state.coinInToday > 0 ? (state.coinOutToday / state.coinInToday) * 100 : 0;
+
+      // atualiza KPIs
+      renderKPIs();
+
+      // atualiza charts sem recriar (melhor performance)
+      const updateLine = (chart, dataArr) => { chart.data.datasets[0].data = dataArr; chart.update("none"); };
+
+      updateLine(charts.sparkOnline, state.online24);
+      updateLine(charts.sparkSessions, state.online24.map(v => Math.round(v*6)));
+      updateLine(charts.sparkCoinIn, state.coinIn24);
+      updateLine(charts.sparkCoinOut, state.coinOut24);
+      updateLine(charts.sparkGgr, state.coinIn24.map((v,i)=>v - state.coinOut24[i]));
+      updateLine(charts.sparkRtp, state.coinIn24.map((v,i)=> v>0 ? (state.coinOut24[i]/v)*100 : 0).map(x=>Math.round(x*10)/10));
+
+      updateLine(charts.coinIn24h, state.coinIn24);
+      updateLine(charts.online24h, state.online24);
+
+      // bar chart
+      charts.coinInByOp.data.datasets[0].data = state.opCoinIn;
+      charts.coinInByOp.update("none");
+    }, 30000);
+  </script>
+</body>
+</html>
