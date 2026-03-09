@@ -1,0 +1,442 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="games.css" />
+  <title>iGP Backoffice - Games</title>
+  </head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visão Operação + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a class="active" href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="bonus-promos.html"><span>Bônus & Promos</span><span class="badge">New</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn" href="index.html">Voltar ao Dashboard</a>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+        </div>
+        <div class="actions">
+          <input class="input" id="searchInput" type="text" placeholder="Buscar jogo" />
+          <select id="statusFilter" class="select" aria-label="Status">
+            <option value="all" selected>Todos</option>
+            <option value="active">Ativos</option>
+            <option value="inactive">Desativados</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="card header">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div class="title">
+            <h2>Games</h2>
+            <p>Gestão de catálogo com ativação rápida por jogo.</p>
+          </div>
+          <div class="pill"><span class="dot" style="background:var(--green)"></span>26 jogos carregados</div>
+        </div>
+      </section>
+
+      <section class="games-grid" id="gamesGrid">
+        <article class="card game-card" data-name="Ace Bonus">
+          <div class="thumb">thumb 01</div>
+          <div class="game-info">
+            <div class="game-name">Ace Bonus</div>
+            <label class="toggle" aria-label="Ativar Ace Bonus">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Ace Mania">
+          <div class="thumb">thumb 02</div>
+          <div class="game-info">
+            <div class="game-name">Ace Mania</div>
+            <label class="toggle" aria-label="Ativar Ace Mania">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="All Star">
+          <div class="thumb">thumb 03</div>
+          <div class="game-info">
+            <div class="game-name">All Star</div>
+            <label class="toggle" aria-label="Ativar All Star">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Beach Bingo">
+          <div class="thumb">thumb 04</div>
+          <div class="game-info">
+            <div class="game-name">Beach Bingo</div>
+            <label class="toggle" aria-label="Ativar Beach Bingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Bingol">
+          <div class="thumb">thumb 05</div>
+          <div class="game-info">
+            <div class="game-name">Bingol</div>
+            <label class="toggle" aria-label="Ativar Bingol">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Bingole">
+          <div class="thumb">thumb 06</div>
+          <div class="game-info">
+            <div class="game-name">Bingole</div>
+            <label class="toggle" aria-label="Ativar Bingole">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Bingole">
+          <div class="thumb">thumb 07</div>
+          <div class="game-info">
+            <div class="game-name">Bingole</div>
+            <label class="toggle" aria-label="Ativar Bingole">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Bingole">
+          <div class="thumb">thumb 08</div>
+          <div class="game-info">
+            <div class="game-name">Bingole</div>
+            <label class="toggle" aria-label="Ativar Bingole">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Bubble Mania">
+          <div class="thumb">thumb 09</div>
+          <div class="game-info">
+            <div class="game-name">Bubble Mania</div>
+            <label class="toggle" aria-label="Ativar Bubble Mania">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Dulce Mania">
+          <div class="thumb">thumb 10</div>
+          <div class="game-info">
+            <div class="game-name">Dulce Mania</div>
+            <label class="toggle" aria-label="Ativar Dulce Mania">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Gambeta Bingo">
+          <div class="thumb">thumb 11</div>
+          <div class="game-info">
+            <div class="game-name">Gambeta Bingo</div>
+            <label class="toggle" aria-label="Ativar Gambeta Bingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Goal Mania">
+          <div class="thumb">thumb 12</div>
+          <div class="game-info">
+            <div class="game-name">Goal Mania</div>
+            <label class="toggle" aria-label="Ativar Goal Mania">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Locomodin">
+          <div class="thumb">thumb 13</div>
+          <div class="game-info">
+            <div class="game-name">Locomodin</div>
+            <label class="toggle" aria-label="Ativar Locomodin">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Locomodin">
+          <div class="thumb">thumb 14</div>
+          <div class="game-info">
+            <div class="game-name">Locomodin</div>
+            <label class="toggle" aria-label="Ativar Locomodin">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Magic Dragon">
+          <div class="thumb">thumb 15</div>
+          <div class="game-info">
+            <div class="game-name">Magic Dragon</div>
+            <label class="toggle" aria-label="Ativar Magic Dragon">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Multibingo">
+          <div class="thumb">thumb 16</div>
+          <div class="game-info">
+            <div class="game-name">Multibingo</div>
+            <label class="toggle" aria-label="Ativar Multibingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="New Triple">
+          <div class="thumb">thumb 17</div>
+          <div class="game-info">
+            <div class="game-name">New Triple</div>
+            <label class="toggle" aria-label="Ativar New Triple">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="New Triple">
+          <div class="thumb">thumb 18</div>
+          <div class="game-info">
+            <div class="game-name">New Triple</div>
+            <label class="toggle" aria-label="Ativar New Triple">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Night Bingo">
+          <div class="thumb">thumb 19</div>
+          <div class="game-info">
+            <div class="game-name">Night Bingo</div>
+            <label class="toggle" aria-label="Ativar Night Bingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Olé Bingo">
+          <div class="thumb">thumb 20</div>
+          <div class="game-info">
+            <div class="game-name">Olé Bingo</div>
+            <label class="toggle" aria-label="Ativar Olé Bingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Roma">
+          <div class="thumb">thumb 21</div>
+          <div class="game-info">
+            <div class="game-name">Roma</div>
+            <label class="toggle" aria-label="Ativar Roma">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Six Bingo">
+          <div class="thumb">thumb 22</div>
+          <div class="game-info">
+            <div class="game-name">Six Bingo</div>
+            <label class="toggle" aria-label="Ativar Six Bingo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Triple Bonus">
+          <div class="thumb">thumb 23</div>
+          <div class="game-info">
+            <div class="game-name">Triple Bonus</div>
+            <label class="toggle" aria-label="Ativar Triple Bonus">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Triple Bonus">
+          <div class="thumb">thumb 24</div>
+          <div class="game-info">
+            <div class="game-name">Triple Bonus</div>
+            <label class="toggle" aria-label="Ativar Triple Bonus">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Triple Mobi">
+          <div class="thumb">thumb 25</div>
+          <div class="game-info">
+            <div class="game-name">Triple Mobi</div>
+            <label class="toggle" aria-label="Ativar Triple Mobi">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+        <article class="card game-card" data-name="Turbo">
+          <div class="thumb">thumb 26</div>
+          <div class="game-info">
+            <div class="game-name">Turbo</div>
+            <label class="toggle" aria-label="Ativar Turbo">
+              <input type="checkbox" checked />
+              <span></span>
+            </label>
+          </div>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    const searchInput = document.getElementById("searchInput");
+    const statusFilter = document.getElementById("statusFilter");
+    const gamesGrid = document.getElementById("gamesGrid");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      setTheme(localStorage.getItem(THEME_KEY) || "dark");
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "❮";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "❯";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "❯";
+        }
+      });
+    }
+
+    function updateGamesBadge() {
+      const badges = document.querySelectorAll("[data-games-count]");
+      const count = localStorage.getItem("igp-games-count");
+      if (!count) return;
+      badges.forEach((el) => { el.textContent = count; });
+    }
+
+    function syncGamesCount() {
+      const cards = document.querySelectorAll(".game-card");
+      localStorage.setItem("igp-games-count", String(cards.length));
+      updateGamesBadge();
+    }
+
+    function filterGames() {
+      const query = searchInput.value.trim().toLowerCase();
+      const status = statusFilter.value;
+      const cards = Array.from(gamesGrid.querySelectorAll(".game-card"));
+      cards.forEach((card) => {
+        const name = card.dataset.name.toLowerCase();
+        const isActive = card.querySelector("input[type='checkbox']").checked;
+        const matchesQuery = name.includes(query);
+        const matchesStatus = status === "all" || (status === "active" && isActive) || (status === "inactive" && !isActive);
+        card.style.display = (matchesQuery && matchesStatus) ? "" : "none";
+      });
+    }
+
+    searchInput.addEventListener("input", filterGames);
+    statusFilter.addEventListener("change", filterGames);
+    gamesGrid.addEventListener("change", (e) => {
+      if (e.target.matches("input[type='checkbox']")) filterGames();
+    });
+
+    initSidebarReveal();
+    initThemeToggle();
+    syncGamesCount();
+  </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+

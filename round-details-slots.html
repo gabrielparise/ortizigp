@@ -3,312 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="round-details-slots.css" />
   <title>iGP Backoffice - Round Details (Slots)</title>
-  <style>
-    :root{
-      --bg:#0b1020;
-      --panel:#0f1730;
-      --panel-2:#111c3a;
-      --border:rgba(255,255,255,.08);
-      --text:#e7ecff;
-      --muted:rgba(231,236,255,.65);
-      --muted-2:rgba(231,236,255,.45);
-      --green:#2ee59d;
-      --yellow:#ffd34d;
-      --red:#ff4d6d;
-      --win:#22c55e;
-      --bonus:#f59e0b;
-      --radius:16px;
-      --shadow-soft: 0 10px 22px rgba(0,0,0,.25);
-      --font-ui: "Inter", "Segoe UI Variable Text", "Nunito Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body.light-theme{
-      --bg:#e9f0ff;
-      --panel:#ffffff;
-      --panel-2:#f1f6ff;
-      --border:rgba(15,23,42,.18);
-      --text:#0b1530;
-      --muted:rgba(11,21,48,.80);
-      --muted-2:rgba(11,21,48,.62);
-      --shadow-soft: 0 10px 24px rgba(15,23,42,.11);
-    }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:var(--font-ui);
-      font-size:15px;
-      line-height:1.45;
-      color:var(--text);
-      background:
-        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.22), transparent 60%),
-        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.18), transparent 60%),
-        linear-gradient(180deg, #070a14, var(--bg) 40%, #070a14);
-      min-height:100vh;
-    }
-    body.light-theme{
-      background:
-        radial-gradient(900px 500px at 15% -10%, rgba(122,92,255,.16), transparent 60%),
-        radial-gradient(900px 500px at 85% -20%, rgba(245,200,76,.14), transparent 60%),
-        linear-gradient(180deg, #f9fbff, var(--bg) 40%, #e4ecff);
-    }
-    body.light-theme .sidebar{ background: linear-gradient(180deg, #f5f8ff, #edf3ff); }
-    body.light-theme .nav a:hover{ background: rgba(59,88,152,.10); border-color: rgba(59,88,152,.20); }
-    body.light-theme .nav a.active{ background: linear-gradient(135deg, rgba(122,92,255,.18), rgba(245,200,76,.18)); border-color: rgba(82,60,188,.30); }
-    body.light-theme .badge{ border-color: rgba(15,23,42,.22); background: rgba(15,23,42,.06); }
-    body.light-theme .btn, body.light-theme .select, body.light-theme .input{ border-color: rgba(15,23,42,.22); background: rgba(255,255,255,.92); }
-    body.light-theme .card, body.light-theme .detail-item, body.light-theme .slot-board-wrap, body.light-theme .paylines-wrap{
-      background: rgba(255,255,255,.90);
-      border-color: rgba(15,23,42,.18);
-    }
-    body.light-theme .slot-cell{
-      border-color: rgba(15,23,42,.24);
-      background: rgba(15,23,42,.03);
-    }
-    body.light-theme .paylines-table th{
-      background:#e8edf7;
-      color:#10223f;
-      border-bottom-color: rgba(15,23,42,.20);
-    }
-    body.light-theme .paylines-table td{
-      border-bottom-color: rgba(15,23,42,.12);
-      border-right-color: rgba(15,23,42,.10);
-    }
-
-    .app{display:grid;grid-template-columns:1fr;min-height:100vh}
-    .sidebar{
-      border-right:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(15,23,48,.85), rgba(15,23,48,.65));
-      padding:20px 16px;
-      position:fixed;
-      left:0;
-      top:0;
-      width:280px;
-      height:100vh;
-      overflow:auto;
-      z-index:40;
-      transform: translateX(calc(-100% + 18px));
-      transition: transform .2s ease;
-    }
-    body.sidebar-open .sidebar{ transform: translateX(0); }
-    .sidebar-reveal{
-      position:fixed; left:0; top:50%; transform:translateY(-50%);
-      width:20px; height:96px;
-      border:1px solid var(--border); border-left:none; border-radius:0 10px 10px 0;
-      background: rgba(255,255,255,.08); color:var(--text);
-      display:flex; align-items:center; justify-content:center;
-      cursor:pointer; z-index:45; backdrop-filter: blur(6px); font-size:12px; user-select:none;
-    }
-    body.light-theme .sidebar-reveal{ background: rgba(15,23,42,.10); border-color: rgba(15,23,42,.20); }
-
-    .brand{display:flex;align-items:center;gap:12px;padding:10px 10px 16px;margin-bottom:10px}
-    .logo{
-      width:42px;height:42px;border-radius:14px;
-      background:
-        radial-gradient(18px 18px at 30% 30%, rgba(245,200,76,.85), transparent 70%),
-        radial-gradient(18px 18px at 70% 70%, rgba(122,92,255,.75), transparent 70%),
-        linear-gradient(135deg, rgba(245,200,76,.15), rgba(122,92,255,.2));
-      border:1px solid rgba(255,255,255,.12);
-      box-shadow: var(--shadow-soft);
-    }
-    .brand h1{font-size:14px;margin:0}
-    .brand p{margin:2px 0 0;font-size:13px;color:var(--muted)}
-    .nav{display:flex;flex-direction:column;gap:6px;padding:10px}
-    .nav a{
-      text-decoration:none;color:var(--muted);padding:10px;border-radius:12px;border:1px solid transparent;
-      display:flex;align-items:center;justify-content:space-between;gap:10px;transition:.18s ease;
-    }
-    .nav a:hover{background: rgba(255,255,255,.04);border-color: rgba(255,255,255,.08);color:var(--text)}
-    .nav a.active{background: linear-gradient(135deg, rgba(122,92,255,.22), rgba(245,200,76,.10));border-color: rgba(122,92,255,.28);color:var(--text)}
-    .badge{font-size:12px;color:var(--text);padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05)}
-    .brand h1,
-    .badge,
-    .metric .val,
-    .kpi .val,
-    td strong,
-    .status,
-    .delta,
-    .pill,
-    .tag{
-      font-family:var(--font-mono);
-    }
-
-    .main{padding:20px;padding-left:36px}
-
-    .topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-    .title h2{margin:0 0 4px;font-size:24px}
-    .title p{margin:0;color:var(--muted);font-size:13px}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .btn,.select,.input{
-      border:1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.04);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      outline:none;
-      font-size:13px;
-      text-decoration:none;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-    }
-    .btn.theme-toggle{ width:44px; height:44px; padding:0; }
-    .btn.theme-toggle svg{
-      width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;
-    }
-    .card{
-      border:1px solid var(--border);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(17,28,58,.85), rgba(15,23,48,.65));
-      box-shadow: var(--shadow-soft);
-      overflow:hidden;
-      position:relative;
-      padding:14px;
-    }
-    .card::before{
-      content:"";
-      position:absolute; inset:-1px -1px auto -1px;
-      height:2px;
-      background: linear-gradient(90deg, rgba(122,92,255,.7), rgba(245,200,76,.6), rgba(46,229,157,.55));
-      opacity:.65;
-    }
-    .header-line{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-    .pill{
-      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:12px;
-      border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.05);
-    }
-    .pill.ok{color:var(--green);border-color:rgba(46,229,157,.25);background:rgba(46,229,157,.08)}
-    .pill.timeout{color:var(--red);border-color:rgba(255,77,109,.28);background:rgba(255,77,109,.08)}
-
-    .layout{display:grid;grid-template-columns:1.2fr 1fr;gap:14px}
-    .details-grid{display:grid;grid-template-columns:repeat(2,minmax(180px,1fr));gap:10px}
-    .detail-item{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
-      background: rgba(255,255,255,.03);
-      padding:10px 12px;
-    }
-    .detail-item .k{font-size:12px;color:var(--muted)}
-    .detail-item .v{margin-top:4px;font-size:13px;color:var(--text);font-weight:600}
-
-    .round-visual{
-      display:grid;
-      grid-template-columns:minmax(220px,.9fr) minmax(280px,1.1fr);
-      gap:6px;
-      align-items:start;
-    }
-    .visual-left,.visual-right{display:grid;gap:6px}
-    .slot-board-wrap{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
-      background: rgba(255,255,255,.03);
-      padding:6px;
-    }
-    .slot-board{
-      display:grid;
-      grid-template-columns: repeat(3, minmax(52px,1fr));
-      gap:4px;
-    }
-    .slot-cell{
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:8px;
-      min-height:44px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      background: rgba(255,255,255,.03);
-      font-size:20px;
-      line-height:1;
-    }
-    .slot-cell.win{
-      border-color: rgba(34,197,94,.55);
-      background: rgba(34,197,94,.18);
-      box-shadow: inset 0 0 0 1px rgba(34,197,94,.28);
-    }
-    .slot-cell.bonus{
-      border-color: rgba(245,158,11,.58);
-      background: rgba(245,158,11,.20);
-      box-shadow: inset 0 0 0 1px rgba(245,158,11,.32);
-    }
-
-    .legend{display:flex;gap:6px;flex-wrap:wrap;margin:0}
-    .legend .tag{
-      display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:11px;
-      border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04)
-    }
-    .dot{width:10px;height:10px;border-radius:99px;display:inline-block}
-    .dot.win{background:var(--win)}
-    .dot.bonus{background:var(--bonus)}
-
-    .visual-metrics{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:6px;
-    }
-    .metric-chip{
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:10px;
-      background: rgba(255,255,255,.03);
-      padding:6px 8px;
-      min-height:46px;
-    }
-    .metric-chip span{
-      display:block;
-      font-size:11px;
-      color:var(--muted);
-      margin-bottom:2px;
-    }
-    .metric-chip strong{
-      font-size:14px;
-      color:var(--text);
-    }
-    .paylines-wrap{
-      border:1px solid rgba(255,255,255,.10);
-      border-radius:12px;
-      background: rgba(255,255,255,.03);
-      overflow:hidden;
-    }
-    .paylines-table{
-      width:100%;
-      border-collapse:separate;
-      border-spacing:0;
-      font-size:12px;
-    }
-    .paylines-table th{
-      background:#2d3643;
-      color:#f2f5fb;
-      text-transform:uppercase;
-      font-weight:700;
-      letter-spacing:.2px;
-      padding:8px 6px;
-      border-bottom:1px solid rgba(255,255,255,.10);
-      text-align:center;
-    }
-    .paylines-table td{
-      padding:7px 6px;
-      border-bottom:1px solid rgba(255,255,255,.08);
-      border-right:1px solid rgba(255,255,255,.06);
-      text-align:center;
-      color:var(--text);
-    }
-    .paylines-table th:last-child, .paylines-table td:last-child{ border-right:none; }
-    .paylines-table tr:last-child td{ border-bottom:none; }
-
-    @media (max-width:1200px){
-      .layout{grid-template-columns:1fr}
-      .round-visual{grid-template-columns:1fr}
-    }
-    @media (max-width:860px){
-      .app{grid-template-columns:1fr}
-      .sidebar{position:relative;width:auto;height:auto;transform:none}
-      .sidebar-reveal{display:none}
-      .details-grid{grid-template-columns:1fr}
-      .slot-board{grid-template-columns: repeat(3, minmax(40px,1fr));}
-      .slot-cell{min-height:38px;font-size:18px}
-      .visual-metrics{grid-template-columns:1fr 1fr}
-    }
-  </style>
-</head>
+  </head>
 <body>
   <div class="app">
     <aside class="sidebar">
@@ -316,29 +13,30 @@
         <div class="logo"></div>
         <div>
           <h1>iGP Backoffice</h1>
-          <p>Visao Operacao + Cliente</p>
+          <p>Visão Operação + Cliente</p>
         </div>
       </div>
       <nav class="nav">
         <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
         <a class="active" href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
-        <a href="#"><span>Games</span><span class="badge">842</span></a>
+        <a href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
         <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
         <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="bonus-promos.html"><span>Bônus & Promos</span><span class="badge">New</span></a>
         <a href="#"><span>Integrators</span><span class="badge">12</span></a>
         <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
         <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
         <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
-        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">?</span></a>
       </nav>
     </aside>
-    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">?</button>
 
     <main class="main">
       <div class="topbar">
         <div class="title">
           <h2>Detalhe da Jogada (Slots)</h2>
-          <p>Visualizacao da rodada com simbolos sorteados, linhas premiadas e bonus.</p>
+          <p>Visualização da rodada com símbolos sorteados, linhas premiadas e Bônus.</p>
         </div>
         <div class="actions">
           <a class="btn" href="player-details.html">Voltar para Player</a>
@@ -364,21 +62,21 @@
         <article class="card">
           <h3 style="margin:0 0 10px;font-size:14px;">Informacoes da jogada</h3>
           <div class="details-grid">
-            <div class="detail-item"><div class="k">Identificacao do jogador</div><div class="v" id="playerRef">-</div></div>
+            <div class="detail-item"><div class="k">Identificação do jogador</div><div class="v" id="playerRef">-</div></div>
             <div class="detail-item"><div class="k">Jogo</div><div class="v" id="gameName">-</div></div>
             <div class="detail-item"><div class="k">Inicio da jogada</div><div class="v" id="startAt">-</div></div>
             <div class="detail-item"><div class="k">Termino da jogada</div><div class="v" id="endAt">-</div></div>
             <div class="detail-item"><div class="k">Saldo inicial</div><div class="v" id="balanceBefore">-</div></div>
             <div class="detail-item"><div class="k">Saldo final</div><div class="v" id="balanceAfter">-</div></div>
             <div class="detail-item"><div class="k">Aposta base</div><div class="v" id="baseBet">-</div></div>
-            <div class="detail-item"><div class="k">Denominacao jogada</div><div class="v" id="denomination">-</div></div>
+            <div class="detail-item"><div class="k">Denominação jogada</div><div class="v" id="denomination">-</div></div>
             <div class="detail-item"><div class="k">Linhas ativas</div><div class="v" id="activeLines">-</div></div>
             <div class="detail-item"><div class="k">Valor por linha</div><div class="v" id="lineBet">-</div></div>
             <div class="detail-item"><div class="k">Montante total apostado</div><div class="v" id="totalBet">-</div></div>
             <div class="detail-item"><div class="k">Total ganho</div><div class="v" id="totalWin">-</div></div>
-            <div class="detail-item"><div class="k">Ganho em bonus</div><div class="v" id="bonusWin">-</div></div>
+            <div class="detail-item"><div class="k">Ganho em Bônus</div><div class="v" id="bonusWin">-</div></div>
             <div class="detail-item"><div class="k">Ganho no Jackpot</div><div class="v" id="jackpotWin">-</div></div>
-            <div class="detail-item"><div class="k">Bonus ativado</div><div class="v" id="bonusTriggered">-</div></div>
+            <div class="detail-item"><div class="k">Bônus ativado</div><div class="v" id="bonusTriggered">-</div></div>
             <div class="detail-item"><div class="k">Free spins ganhos</div><div class="v" id="freeSpinsWon">-</div></div>
             <div class="detail-item"><div class="k">Multiplicador aplicado</div><div class="v" id="multiplier">-</div></div>
           </div>
@@ -413,13 +111,13 @@
           </div>
           <div class="visual-right">
             <div class="legend">
-              <span class="tag"><span class="dot win"></span>Simbolo premiado</span>
-              <span class="tag"><span class="dot bonus"></span>Simbolo bonus/scatter</span>
+              <span class="tag"><span class="dot win"></span>Símbolo premiado</span>
+              <span class="tag"><span class="dot bonus"></span>Símbolo Bônus/scatter</span>
             </div>
             <div class="visual-metrics">
               <div class="metric-chip"><span>Linhas premiadas</span><strong id="visualWinLines">-</strong></div>
-              <div class="metric-chip"><span>Simbolos de ganho</span><strong id="visualWinSymbols">-</strong></div>
-              <div class="metric-chip"><span>Scatters/Bonus</span><strong id="visualBonusSymbols">-</strong></div>
+              <div class="metric-chip"><span>símbolos de ganho</span><strong id="visualWinSymbols">-</strong></div>
+              <div class="metric-chip"><span>Scatters/Bônus</span><strong id="visualBonusSymbols">-</strong></div>
               <div class="metric-chip"><span>Multiplicador</span><strong id="visualMultiplier">-</strong></div>
             </div>
             <div class="paylines-wrap">
@@ -427,7 +125,7 @@
                 <thead>
                   <tr>
                     <th>Payline</th>
-                    <th>Simbolos</th>
+                    <th>símbolos</th>
                     <th>Qtde</th>
                     <th>Multiplicador</th>
                     <th>Premio</th>
@@ -469,16 +167,16 @@
         freeSpinsWon: 8,
         multiplier: "x3",
         reels: [
-          ["ðŸ¯","ðŸ’°","ðŸ²"],
-          ["ðŸ’Ž","ðŸ¯","â­"],
-          ["ðŸ¯","ðŸª™","ðŸ¯"]
+          ["🐯","💰","🐲"],
+          ["💎","🐯","⭐"],
+          ["🐯","🪙","🐯"]
         ],
         winningPositions: [[0,0],[1,1],[2,0],[2,2]],
         bonusPositions: [[0,2],[1,2]],
         paylines: [
-          { id:"L1", symbol:"ðŸ¯", count:3, mult:"x12", prize:120.00 },
-          { id:"L7", symbol:"ðŸ¯", count:4, mult:"x18", prize:120.00 },
-          { id:"L12", symbol:"â­", count:3, mult:"x7", prize:70.00 }
+          { id:"L1", symbol:"🐯", count:3, mult:"x12", prize:120.00 },
+          { id:"L7", symbol:"🐯", count:4, mult:"x18", prize:120.00 },
+          { id:"L12", symbol:"⭐", count:3, mult:"x7", prize:70.00 }
         ],
         session: {
           ip: "179.102.55.28",
@@ -516,9 +214,9 @@
         freeSpinsWon: 0,
         multiplier: "x1",
         reels: [
-          ["âš¡","ðŸ”±","ðŸ’Ž"],
-          ["ðŸ”±","ðŸ‡","ðŸ‰"],
-          ["ðŸ‰","âš¡","ðŸ”±"]
+          ["⚡","🔱","💎"],
+          ["🔱","🍇","🍉"],
+          ["🍉","⚡","🔱"]
         ],
         winningPositions: [],
         bonusPositions: [[0,1],[1,0],[2,2]],
@@ -571,7 +269,7 @@
       if (window.innerWidth <= 860) return;
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       document.body.classList.add("sidebar-open");
-      if (sidebarReveal) sidebarReveal.textContent = "â®";
+      if (sidebarReveal) sidebarReveal.textContent = "❮";
     }
 
     function closeSidebarDelayed() {
@@ -579,7 +277,7 @@
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       sidebarCloseTimer = setTimeout(() => {
         document.body.classList.remove("sidebar-open");
-        if (sidebarReveal) sidebarReveal.textContent = "â¯";
+        if (sidebarReveal) sidebarReveal.textContent = "❯";
       }, 120);
     }
 
@@ -598,7 +296,7 @@
       window.addEventListener("resize", () => {
         if (window.innerWidth <= 860) {
           document.body.classList.remove("sidebar-open");
-          sidebarReveal.textContent = "â¯";
+          sidebarReveal.textContent = "❯";
         }
       });
     }
@@ -698,9 +396,33 @@
     initThemeToggle();
     initSidebarReveal();
     renderRound(roundSelect.value);
-  </script>
+    function updateGamesBadge() {
+      const badges = document.querySelectorAll("[data-games-count]");
+      const count = localStorage.getItem("igp-games-count");
+      if (!count) return;
+      badges.forEach((el) => { el.textContent = count; });
+    }
+
+    updateGamesBadge();</script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

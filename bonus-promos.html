@@ -1,0 +1,439 @@
+﻿<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="bonus-promos.css" />
+  <title>iGP Backoffice - Criação de Bônus e Promoções</title>
+  </head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visão Operação + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="bonus-promos.html"><span>Bônus & Promos</span><span class="badge">New</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">⚙</span></a>
+      </nav>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">❯</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn" href="index.html">Voltar ao Dashboard</a>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+        </div>
+        <div class="actions">
+          <select id="profileSelect" class="select" aria-label="Perfil">
+            <option value="igp" selected>Operação Interna (iGP)</option>
+            <option value="client">Cliente (Operadora)</option>
+          </select>
+          <select id="clientSelect" class="select" aria-label="Cliente">
+            <option value="all" selected>Todos os Clientes</option>
+            <option value="a">Operadora A</option>
+            <option value="b">Operadora B</option>
+            <option value="c">Operadora C</option>
+          </select>
+          <select id="statusSelect" class="select" aria-label="Status">
+            <option value="draft" selected>Rascunho</option>
+            <option value="scheduled">Agendado</option>
+            <option value="live">Ativo</option>
+            <option value="paused">Pausado</option>
+          </select>
+        </div>
+      </div>
+
+      <section class="card header">
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+          <div class="title">
+            <h2>Criação de Bônus e Promoções</h2>
+            <p>Configure ofertas com regras claras, limites e previsão de custo.</p>
+          </div>
+          <div class="pill ok"><span class="dot"></span>Rascunho</div>
+        </div>
+      </section>
+
+      <section class="layout">
+        <div class="stack">
+          <article class="card section">
+            <h3>Identificação da campanha</h3>
+            <div class="form-grid">
+              <div class="row">
+                <input id="campaignName" class="input" type="text" placeholder="Nome da campanha" />
+                <input id="campaignCode" class="input" type="text" placeholder="Codigo interno (ex: RETENCAO_03)" />
+              </div>
+              <div class="row">
+                <select id="campaignType" class="select" aria-label="Tipo de promocao">
+                  <option value="welcome" selected>Boas-vindas</option>
+                  <option value="cashback">Cashback</option>
+                  <option value="reload">Reload</option>
+                  <option value="freespin">Free spins</option>
+                  <option value="vip">VIP / Segmentada</option>
+                </select>
+                <select id="campaignChannel" class="select" aria-label="Canal">
+                  <option value="site" selected>Site / Lobby</option>
+                  <option value="crm">CRM (Email/SMS/Push)</option>
+                  <option value="vip">VIP / Operador</option>
+                  <option value="affiliate">Afiliados</option>
+                </select>
+              </div>
+              <textarea id="campaignDesc" class="input full" rows="3" maxlength="200" placeholder="Descrição curta para o time e para o CRM (max 200 caracteres)"></textarea>
+              <p class="helper">Use uma Descrição clara para facilitar Aprovação e comunicação.</p>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Configuração do Bônus</h3>
+            <div class="form-grid">
+              <div class="row">
+                <select id="bonusType" class="select" aria-label="Tipo de Bônus">
+                  <option value="match" selected>Match no Depósito</option>
+                  <option value="fixed">Valor fixo</option>
+                  <option value="cashback">Cashback percentual</option>
+                  <option value="freespin">Free spins</option>
+                </select>
+                <input id="bonusValue" class="input" type="number" min="0" step="0.01" placeholder="Valor / % (ex: 100 ou 15)" />
+              </div>
+              <div class="row">
+                <input id="bonusMinDeposit" class="input" type="number" min="0" step="0.01" placeholder="Depósito Mínimo" />
+                <input id="bonusMaxAmount" class="input" type="number" min="0" step="0.01" placeholder="Teto de Bônus" />
+              </div>
+              <div class="triple">
+                <input id="bonusWager" class="input" type="number" min="0" step="1" placeholder="Rollover (x)" />
+                <input id="bonusValidity" class="input" type="number" min="1" step="1" placeholder="Validade (dias)" />
+                <input id="bonusMaxClaims" class="input" type="number" min="1" step="1" placeholder="Máximo por player" />
+              </div>
+              <div class="row">
+                <select id="bonusWallet" class="select" aria-label="Carteira">
+                  <option value="bonus" selected>Saldo Bônus</option>
+                  <option value="cash">Saldo normal</option>
+                </select>
+                <select id="bonusRelease" class="select" aria-label="Liberação">
+                  <option value="instant" selected>Instantaneo</option>
+                  <option value="progressive">Progressivo por aposta</option>
+                  <option value="manual">Manual / Aprovação</option>
+                </select>
+              </div>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Elegibilidade e Segmentação</h3>
+            <div class="form-grid">
+              <div class="row">
+                <select id="segment" class="select" aria-label="Segmento">
+                  <option value="all" selected>Todos os players</option>
+                  <option value="new">Novos (ate 7 dias)</option>
+                  <option value="vip">VIP / High value</option>
+                  <option value="risk">Risco controlado</option>
+                </select>
+                <select id="country" class="select" aria-label="País">
+                  <option value="all" selected>Todos os Países</option>
+                  <option value="br">Brasil</option>
+                  <option value="mx">Mexico</option>
+                  <option value="pe">Peru</option>
+                </select>
+              </div>
+              <div class="row">
+                <input id="minDepositCount" class="input" type="number" min="0" step="1" placeholder="Depósitos Mínimos (Histórico)" />
+                <input id="minLtv" class="input" type="number" min="0" step="0.01" placeholder="LTV Mínimo (R$)" />
+              </div>
+              <textarea id="segmentNotes" class="input full" rows="2" maxlength="160" placeholder="Notas da Segmentação / lista de Exclusão (max 160 caracteres)"></textarea>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Agenda e limites</h3>
+            <div class="form-grid">
+              <div class="row">
+                <input id="startDate" class="input" type="date" />
+                <input id="endDate" class="input" type="date" />
+              </div>
+              <div class="row">
+                <input id="dailyCap" class="input" type="number" min="0" step="1" placeholder="Limite Diário de usos" />
+                <input id="budgetCap" class="input" type="number" min="0" step="0.01" placeholder="Orcamento total (R$)" />
+              </div>
+              <div class="row">
+                <select id="riskPolicy" class="select" aria-label="Política de risco">
+                  <option value="auto" selected>Validação automática</option>
+                  <option value="manual">Aprovação manual</option>
+                  <option value="strict">Risco estrito (KYC completo)</option>
+                </select>
+                <select id="paymentMethod" class="select" aria-label="Metodos">
+                  <option value="all" selected>Todos os metodos</option>
+                  <option value="pix">Somente Pix</option>
+                  <option value="card">Somente Cartao</option>
+                </select>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <div class="stack">
+          <article class="card section">
+            <h3>Resumo em tempo real</h3>
+            <div class="kpi-grid">
+              <div class="card kpi">
+                <div class="lbl">Custo estimado</div>
+                <div class="val" id="kpiCost">R$ 0</div>
+                <div class="meta">com base no teto e limite Diário</div>
+              </div>
+              <div class="card kpi">
+                <div class="lbl">Rollover total</div>
+                <div class="val" id="kpiRollover">R$ 0</div>
+                <div class="meta">Bônus * rollover</div>
+              </div>
+              <div class="card kpi">
+                <div class="lbl">ROI esperado</div>
+                <div class="val" id="kpiRoi">0%</div>
+                <div class="meta">estimativa operacional</div>
+              </div>
+            </div>
+
+            <div class="highlight" style="margin-top:12px">
+              <div class="row"><span>Nome</span><strong id="previewName">-</strong></div>
+              <div class="row"><span>Tipo</span><strong id="previewType">-</strong></div>
+              <div class="row"><span>Segmento</span><strong id="previewSegment">-</strong></div>
+              <div class="row"><span>Período</span><strong id="previewPeriod">-</strong></div>
+              <div class="row"><span>Limites</span><strong id="previewLimits">-</strong></div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn primary sm" id="saveDraft">SALVAR RASCUNHO</button>
+              <button class="btn sm" id="previewCampaign">PREVIEW</button>
+              <button class="btn sm" id="publishCampaign">PUBLICAR</button>
+            </div>
+          </article>
+
+          <article class="card section">
+            <h3>Últimas campanhas</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Tipo</th>
+                  <th>Status</th>
+                  <th>Inicio</th>
+                  <th>Budget</th>
+                </tr>
+              </thead>
+              <tbody id="campaignBody"></tbody>
+            </table>
+          </article>
+
+          <article class="card section">
+            <h3>Checklist de Aprovação</h3>
+            <div class="info-grid">
+              <div class="row"><span>Regra de rollover definida</span><strong id="checkRollover">Nao</strong></div>
+              <div class="row"><span>Período configurado</span><strong id="checkPeriod">Nao</strong></div>
+              <div class="row"><span>Limites configurados</span><strong id="checkLimits">Nao</strong></div>
+              <div class="row"><span>Política de risco</span><strong id="checkRisk">Nao</strong></div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const FILTERS_KEY = "igp-bonus-filters-v1";
+
+    const profileSelect = document.getElementById("profileSelect");
+    const clientSelect = document.getElementById("clientSelect");
+    const statusSelect = document.getElementById("statusSelect");
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    const mockCampaigns = [
+      ["Cashback Pix 15%", "Cashback", "Ativo", "2026-03-01", "R$ 120.000"],
+      ["Boas-vindas 100%", "Boas-vindas", "Agendado", "2026-03-12", "R$ 80.000"],
+      ["Reload VIP", "VIP", "Pausado", "2026-02-20", "R$ 35.000"]
+    ];
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      setTheme(localStorage.getItem(THEME_KEY) || "dark");
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "❮";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "❯";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "❯";
+        }
+      });
+    }
+
+    function saveFilters() {
+      localStorage.setItem(FILTERS_KEY, JSON.stringify({
+        profile: profileSelect.value,
+        client: clientSelect.value,
+        status: statusSelect.value
+      }));
+    }
+
+    function restoreFilters() {
+      const raw = localStorage.getItem(FILTERS_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.profile) profileSelect.value = parsed.profile;
+        if (parsed?.client) clientSelect.value = parsed.client;
+        if (parsed?.status) statusSelect.value = parsed.status;
+      } catch {}
+    }
+
+    function formatMoneyBRL(value) {
+      return Number(value || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    }
+
+    function parseNumber(value) {
+      const num = Number(value);
+      return Number.isFinite(num) ? num : 0;
+    }
+
+    function renderCampaigns() {
+      const body = document.getElementById("campaignBody");
+      body.innerHTML = mockCampaigns.map((r) => (
+        "<tr><td><strong>" + r[0] + "</strong></td><td>" + r[1] + "</td><td>" + r[2] + "</td><td>" + r[3] + "</td><td>" + r[4] + "</td></tr>"
+      )).join("");
+    }
+
+    function computeSummary() {
+      const name = document.getElementById("campaignName").value || "-";
+      const type = document.getElementById("campaignType").selectedOptions[0]?.textContent || "-";
+      const segment = document.getElementById("segment").selectedOptions[0]?.textContent || "-";
+      const start = document.getElementById("startDate").value || "-";
+      const end = document.getElementById("endDate").value || "-";
+      const dailyCap = parseNumber(document.getElementById("dailyCap").value);
+      const budgetCap = parseNumber(document.getElementById("budgetCap").value);
+
+      const bonusValue = parseNumber(document.getElementById("bonusValue").value);
+      const bonusMax = parseNumber(document.getElementById("bonusMaxAmount").value);
+      const rollover = parseNumber(document.getElementById("bonusWager").value);
+
+      const costEstimate = Math.max(budgetCap || 0, (dailyCap || 0) * (bonusMax || bonusValue || 0));
+      const rolloverTotal = (bonusMax || bonusValue || 0) * (rollover || 0);
+
+      document.getElementById("previewName").textContent = name;
+      document.getElementById("previewType").textContent = type;
+      document.getElementById("previewSegment").textContent = segment;
+      document.getElementById("previewPeriod").textContent = start + " a " + end;
+      document.getElementById("previewLimits").textContent = dailyCap ? (dailyCap + " usos/dia") : "Sem limite Diário";
+
+      document.getElementById("kpiCost").textContent = formatMoneyBRL(costEstimate);
+      document.getElementById("kpiRollover").textContent = formatMoneyBRL(rolloverTotal);
+
+      const roi = rolloverTotal > 0 ? Math.min(120, Math.round((rolloverTotal / Math.max(costEstimate, 1)) * 100)) : 0;
+      document.getElementById("kpiRoi").textContent = roi + "%";
+
+      document.getElementById("checkRollover").textContent = rollover > 0 ? "Sim" : "Nao";
+      document.getElementById("checkPeriod").textContent = (start !== "-" && end !== "-") ? "Sim" : "Nao";
+      document.getElementById("checkLimits").textContent = (dailyCap > 0 || budgetCap > 0) ? "Sim" : "Nao";
+      document.getElementById("checkRisk").textContent = document.getElementById("riskPolicy").value ? "Sim" : "Nao";
+    }
+
+    [profileSelect, clientSelect, statusSelect].forEach((el) => {
+      el.addEventListener("change", saveFilters);
+    });
+
+    document.querySelectorAll("input, select, textarea").forEach((el) => {
+      el.addEventListener("input", computeSummary);
+      el.addEventListener("change", computeSummary);
+    });
+
+    restoreFilters();
+    initSidebarReveal();
+    initThemeToggle();
+    renderCampaigns();
+    computeSummary();
+    function updateGamesBadge() {
+      const badges = document.querySelectorAll("[data-games-count]");
+      const count = localStorage.getItem("igp-games-count");
+      if (!count) return;
+      badges.forEach((el) => { el.textContent = count; });
+    }
+
+    updateGamesBadge();</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
