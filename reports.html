@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pt-BR">
 <head>
   <meta charset="utf-8" />
@@ -21,6 +21,7 @@
         <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
         <a href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
         <a href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
+        <a href="assets.html"><span>Assets</span><span class="badge">Marketing</span></a>
         <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
         <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
         <a href="bonus-promos.html"><span>Bonus & Promos</span><span class="badge">New</span></a>
@@ -35,7 +36,7 @@
         <div>Filtro atual: <span style="color:var(--text)">Todos os clientes</span></div>
       </div>
     </aside>
-    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">≡</button>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">â‰¡</button>
 
     <main class="main">
       <div class="topbar">
@@ -283,7 +284,7 @@
       if (window.innerWidth <= 860) return;
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       document.body.classList.add("sidebar-open");
-      if (sidebarReveal) sidebarReveal.textContent = "≡";
+      if (sidebarReveal) sidebarReveal.textContent = "â‰¡";
     }
 
     function closeSidebarDelayed() {
@@ -291,7 +292,7 @@
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       sidebarCloseTimer = setTimeout(() => {
         document.body.classList.remove("sidebar-open");
-        if (sidebarReveal) sidebarReveal.textContent = "≡";
+        if (sidebarReveal) sidebarReveal.textContent = "â‰¡";
       }, 120);
     }
 
@@ -310,7 +311,7 @@
       window.addEventListener("resize", () => {
         if (window.innerWidth <= 860) {
           document.body.classList.remove("sidebar-open");
-          sidebarReveal.textContent = "≡";
+          sidebarReveal.textContent = "â‰¡";
         }
       });
     }
@@ -388,3 +389,4 @@
   </script>
 </body>
 </html>
+
