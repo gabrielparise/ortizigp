@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="reports.css" />
+  <title>iGP Backoffice - Reports</title>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  </head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visao Operacao + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="bonus-promos.html"><span>Bonus & Promos</span><span class="badge">New</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a class="active" href="reports.html"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">Config</span></a>
+      </nav>
+      <div class="footer">
+        <div style="margin-bottom:6px;">Perfil: <strong style="color:var(--text)">Operacao Interna</strong></div>
+        <div>Filtro atual: <span style="color:var(--text)">Todos os clientes</span></div>
+      </div>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">≡</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Reports</h2>
+          <span>Relatorios essenciais de operacao, financeiro e performance</span>
+        </div>
+        <div class="actions">
+          <select id="profileSelect" class="select" aria-label="Perfil">
+            <option value="igp" selected>Operacao Interna (iGP)</option>
+            <option value="client">Cliente (Operadora)</option>
+          </select>
+          <select id="periodSelect" class="select" aria-label="Periodo">
+            <option value="today" selected>Hoje</option>
+            <option value="24h">Ultimas 24 horas</option>
+            <option value="7d">Ultimos 7 dias</option>
+            <option value="30d">Ultimos 30 dias</option>
+          </select>
+          <select id="clientSelect" class="select" aria-label="Cliente">
+            <option value="all" selected>Todos os Clientes</option>
+            <option value="a">Operadora A</option>
+            <option value="b">Operadora B</option>
+            <option value="c">Operadora C</option>
+          </select>
+          <select id="reportType" class="select" aria-label="Tipo de relatorio">
+            <option value="finance" selected>Financeiro</option>
+            <option value="games">Performance de Games</option>
+            <option value="players">Base de Players</option>
+            <option value="risk">Fraude & Risco</option>
+          </select>
+          <div class="export-group">
+            <button class="btn primary" id="btnExport">Exportar</button>
+            <select id="exportFormat" class="select" aria-label="Formato de exportacao">
+              <option value="xlsx" selected>XLSX</option>
+              <option value="csv">CSV</option>
+            </select>
+          </div>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg></button>
+        </div>
+      </div>
+
+      <section class="grid kpis">
+        <article class="card">
+          <div class="hd"><div class="lbl">GGR (Hoje)</div><div class="delta up">+4.8%</div></div>
+          <div class="bd"><div class="metric"><div class="val">R$ 1.240.000</div><div>vs ontem</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">NGR (Hoje)</div><div class="delta up">+2.1%</div></div>
+          <div class="bd"><div class="metric"><div class="val">R$ 980.000</div><div>aplicado bonus</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">Depositos 24h</div><div class="delta up">+6.2%</div></div>
+          <div class="bd"><div class="metric"><div class="val">R$ 2.430.000</div><div>volume</div></div></div>
+        </article>
+        <article class="card">
+          <div class="hd"><div class="lbl">Saques 24h</div><div class="delta down">+3.4%</div></div>
+          <div class="bd"><div class="metric"><div class="val">R$ 1.820.000</div><div>volume</div></div></div>
+        </article>
+      </section>
+
+      <section class="reports-grid">
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Financeiro Diario</span>
+            <span class="tag strong">Principal</span>
+          </div>
+          <h3>Resumo financeiro por operador</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">GGR, NGR, bonus e margem por operador com comparativo dia/semana.</p>
+          <div class="report-tags">
+            <span class="tag">Operadores</span>
+            <span class="tag">GGR</span>
+            <span class="tag">NGR</span>
+          </div>
+        </article>
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Performance Games</span>
+            <span class="tag">Top 10</span>
+          </div>
+          <h3>Ranking de games e volatilidade</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">RTP, bet media e conversao por jogo com variacao por periodo.</p>
+          <div class="report-tags">
+            <span class="tag">Games</span>
+            <span class="tag">RTP</span>
+            <span class="tag">Sessao</span>
+          </div>
+        </article>
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Base de Players</span>
+            <span class="tag">Cohorts</span>
+          </div>
+          <h3>Retencao e churn</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">Cohorts por data de registro com D1/D7/D30 e LTV.</p>
+          <div class="report-tags">
+            <span class="tag">Players</span>
+            <span class="tag">Retencao</span>
+            <span class="tag">LTV</span>
+          </div>
+        </article>
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Bonus & Promos</span>
+            <span class="tag">ROI</span>
+          </div>
+          <h3>ROI de campanhas</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">Conversao, custo e payback de bonus e promocoes ativas.</p>
+          <div class="report-tags">
+            <span class="tag">Bonus</span>
+            <span class="tag">Promos</span>
+            <span class="tag">ROI</span>
+          </div>
+        </article>
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Jackpots</span>
+            <span class="tag">Progressivo</span>
+          </div>
+          <h3>Impacto de jackpots</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">Picos de receita, eventos e cobertura por operador.</p>
+          <div class="report-tags">
+            <span class="tag">Jackpots</span>
+            <span class="tag">Eventos</span>
+            <span class="tag">Receita</span>
+          </div>
+        </article>
+        <article class="card report-card">
+          <div class="report-meta">
+            <span>Risco</span>
+            <span class="tag">Alertas</span>
+          </div>
+          <h3>Fraude e comportamento anomalo</h3>
+          <p style="margin:0;color:var(--muted);font-size:13px;">Sessao suspeita, chargeback e perfis em monitoramento.</p>
+          <div class="report-tags">
+            <span class="tag">Fraude</span>
+            <span class="tag">Chargeback</span>
+            <span class="tag">Risco</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="card" style="padding:14px;">
+        <div class="table-wrap">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;">
+            <h3 style="margin:0;font-size:14px;">Resumo diario por operador</h3>
+            <span class="pill">Atualizado ha 5 min</span>
+          </div>
+          <table class="report-table" id="reportTable">
+            <thead>
+              <tr>
+                <th>Operador</th>
+                <th>GGR</th>
+                <th>NGR</th>
+                <th>Depositos</th>
+                <th>Saques</th>
+                <th>Bonus</th>
+                <th>Margem</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Operadora A</strong></td>
+                <td>R$ 420.000</td>
+                <td>R$ 332.000</td>
+                <td>R$ 920.000</td>
+                <td>R$ 620.000</td>
+                <td>R$ 88.000</td>
+                <td>28.4%</td>
+                <td><span class="status ok"><span class="dot"></span>Ok</span></td>
+              </tr>
+              <tr>
+                <td><strong>Operadora B</strong></td>
+                <td>R$ 310.000</td>
+                <td>R$ 245.000</td>
+                <td>R$ 680.000</td>
+                <td>R$ 540.000</td>
+                <td>R$ 65.000</td>
+                <td>24.1%</td>
+                <td><span class="status warn"><span class="dot"></span>Atencao</span></td>
+              </tr>
+              <tr>
+                <td><strong>Operadora C</strong></td>
+                <td>R$ 510.000</td>
+                <td>R$ 403.000</td>
+                <td>R$ 830.000</td>
+                <td>R$ 660.000</td>
+                <td>R$ 107.000</td>
+                <td>31.8%</td>
+                <td><span class="status ok"><span class="dot"></span>Ok</span></td>
+              </tr>
+              <tr>
+                <td><strong>Operadora D</strong></td>
+                <td>R$ 180.000</td>
+                <td>R$ 126.000</td>
+                <td>R$ 390.000</td>
+                <td>R$ 340.000</td>
+                <td>R$ 54.000</td>
+                <td>19.6%</td>
+                <td><span class="status risk"><span class="dot"></span>Risco</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const FILTERS_KEY = "igp-global-filters";
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const profileSelect = document.getElementById("profileSelect");
+    const periodSelect = document.getElementById("periodSelect");
+    const clientSelect = document.getElementById("clientSelect");
+    const reportType = document.getElementById("reportType");
+    const btnExport = document.getElementById("btnExport");
+    const exportFormat = document.getElementById("exportFormat");
+    const reportTable = document.getElementById("reportTable");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      const saved = localStorage.getItem(THEME_KEY) || "dark";
+      setTheme(saved);
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "≡";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "≡";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "≡";
+        }
+      });
+    }
+
+    function saveGlobalFilters() {
+      const payload = {
+        profile: profileSelect.value,
+        period: periodSelect.value,
+        client: clientSelect.value,
+        reportType: reportType.value
+      };
+      localStorage.setItem(FILTERS_KEY, JSON.stringify(payload));
+    }
+
+    function restoreGlobalFilters() {
+      const raw = localStorage.getItem(FILTERS_KEY);
+      if (!raw) return;
+      try {
+        const parsed = JSON.parse(raw);
+        if (parsed?.profile) profileSelect.value = parsed.profile;
+        if (parsed?.period) periodSelect.value = parsed.period;
+        if (parsed?.client) clientSelect.value = parsed.client;
+        if (parsed?.reportType) reportType.value = parsed.reportType;
+      } catch {}
+    }
+
+    [profileSelect, periodSelect, clientSelect, reportType].forEach((el) => {
+      el.addEventListener("change", saveGlobalFilters);
+    });
+
+    function buildCsvFromTable(table) {
+      const rows = Array.from(table.querySelectorAll("tr"));
+      return rows.map((row) => {
+        const cells = Array.from(row.children).map((cell) => {
+          const text = cell.textContent.trim().replace(/\"/g, '""');
+          return "\"" + text + "\"";
+        });
+        return cells.join(",");
+      }).join("\n");
+    }
+
+    function downloadCsv() {
+      const csv = buildCsvFromTable(reportTable);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "relatorio-operadores.csv";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    function downloadXlsx() {
+      if (!window.XLSX) return;
+      const wb = XLSX.utils.table_to_book(reportTable, { sheet: "Resumo Operadores" });
+      XLSX.writeFile(wb, "relatorio-operadores.xlsx");
+    }
+
+    btnExport.addEventListener("click", () => {
+      if (exportFormat.value === "csv") downloadCsv();
+      else downloadXlsx();
+    });
+
+    function updateGamesBadge() {
+      const badges = document.querySelectorAll("[data-games-count]");
+      const count = localStorage.getItem("igp-games-count");
+      if (!count) return;
+      badges.forEach((el) => { el.textContent = count; });
+    }
+
+    restoreGlobalFilters();
+    initSidebarReveal();
+    initThemeToggle();
+    updateGamesBadge();
+  </script>
+</body>
+</html>

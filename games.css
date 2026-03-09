@@ -155,18 +155,21 @@
 
     .games-grid{
       display:grid;
-      grid-template-columns:repeat(4,minmax(210px,1fr));
+      grid-template-columns:repeat(auto-fill, 324px);
       gap:12px;
       margin-top:14px;
+      justify-content:space-between;
     }
     .game-card{
+      width:324px;
       padding:12px;
       display:grid;
       gap:10px;
     }
     .thumb{
       width:100%;
-      height:120px;
+      height:300px;
+      max-width:100%;
       border-radius:12px;
       border:1px solid rgba(255,255,255,.12);
       background:
@@ -178,17 +181,33 @@
       padding:10px;
       color:var(--muted);
       font-size:12px;
+      overflow:hidden;
+    }
+    .thumb img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
     }
     .game-info{
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap:10px;
+      min-width:0;
     }
     .game-name{
       font-size:14px;
       color:var(--text);
       font-weight:600;
+      min-width:0;
+      flex:1 1 auto;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .toggle{
+      flex:0 0 auto;
     }
 
     .toggle{
