@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="login.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <title>iGP Backoffice — Login</title>
+</head>
+<body>
+  <main class="login">
+    <section class="panel">
+      <div class="headline">
+        <h2>Bem-vindo de volta</h2>
+        <p>Acesse o painel com suas credenciais.</p>
+      </div>
+
+      <form id="loginForm" class="form">
+        <label class="field">
+          <span>Usuário</span>
+          <input id="username" name="username" type="text" autocomplete="username" value="admin" required />
+        </label>
+
+        <label class="field">
+          <span>Senha</span>
+          <input id="password" name="password" type="password" autocomplete="current-password" value="admin" required />
+        </label>
+
+        <div class="actions">
+          <button type="button" class="link" id="forgotBtn">Esqueceu sua senha?</button>
+          <button type="submit" class="btn primary">Entrar</button>
+        </div>
+
+        <div class="alert" id="loginAlert" role="alert" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById("loginForm");
+    const alertBox = document.getElementById("loginAlert");
+    const forgotBtn = document.getElementById("forgotBtn");
+
+    function showAlert(message, type = "error") {
+      alertBox.textContent = message;
+      alertBox.dataset.type = type;
+      alertBox.classList.toggle("show", Boolean(message));
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
+
+      if (user === "admin" && pass === "admin") {
+        showAlert("Login efetuado. Redirecionando...", "success");
+        setTimeout(() => { window.location.href = "index.html"; }, 700);
+        return;
+      }
+
+      showAlert("Credenciais inválidas. Tente admin/admin.");
+    });
+
+    forgotBtn.addEventListener("click", () => {
+      showAlert("Recuperação não habilitada neste mock.", "info");
+    });
+  </script>
+</body>
+</html>

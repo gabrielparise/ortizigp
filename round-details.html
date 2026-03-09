@@ -27,10 +27,10 @@
         <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
         <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
         <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
-        <a href="settings.html"><span>Settings</span><span class="badge">?</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">Config</span></a>
       </nav>
     </aside>
-    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">?</button>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">≡</button>
 
     <main class="main">
       <div class="topbar">
@@ -322,7 +322,7 @@
       if (window.innerWidth <= 860) return;
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       document.body.classList.add("sidebar-open");
-      sidebarReveal.textContent = "?";
+      sidebarReveal.textContent = "≡";
     }
 
     function closeSidebarDelayed() {
@@ -330,7 +330,7 @@
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       sidebarCloseTimer = setTimeout(() => {
         document.body.classList.remove("sidebar-open");
-        sidebarReveal.textContent = "?";
+        sidebarReveal.textContent = "≡";
       }, 120);
     }
 
@@ -349,7 +349,7 @@
       window.addEventListener("resize", () => {
         if (window.innerWidth <= 860) {
           document.body.classList.remove("sidebar-open");
-          sidebarReveal.textContent = "?";
+          sidebarReveal.textContent = "≡";
         }
       });
     }

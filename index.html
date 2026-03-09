@@ -34,7 +34,7 @@
         <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
         <a href="#"><span>Reports</span><span class="badge">PDF</span></a>
         <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
-        <a href="settings.html"><span>Settings</span><span class="badge">?</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">Config</span></a>
       </nav>
 
       <div class="footer">
@@ -42,7 +42,7 @@
         <div>Filtro atual: <span style="color:var(--text)">Todos os clientes</span></div>
       </div>
     </aside>
-    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">?</button>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">≡</button>
 
     <!-- Main -->
     <main class="main">
@@ -53,7 +53,7 @@
         </div>
 
         <div class="actions">
-          <span class="pill">?? Atualiza a cada <strong style="color:var(--text)">30s</strong></span>
+          <span class="pill">Atualiza a cada <strong style="color:var(--text)">30s</strong></span>
 
           <select class="select" id="profileSelect" aria-label="Perfil">
             <option value="igp" selected>Operação Interna (iGP)</option>
@@ -92,7 +92,7 @@
       <section class="grid kpis">
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? Jogadores Online</div>
+            <div class="lbl">Jogadores Online</div>
             <div class="tag">agora</div>
           </div>
           <div class="bd">
@@ -108,7 +108,7 @@
 
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? sessões Ativas</div>
+            <div class="lbl">sessões Ativas</div>
             <div class="tag">agora</div>
           </div>
           <div class="bd">
@@ -124,7 +124,7 @@
 
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? Coin-In (Hoje)</div>
+            <div class="lbl">Coin-In (Hoje)</div>
             <div class="tag">financeiro</div>
           </div>
           <div class="bd">
@@ -140,7 +140,7 @@
 
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? Coin-Out (Hoje)</div>
+            <div class="lbl">Coin-Out (Hoje)</div>
             <div class="tag">financeiro</div>
           </div>
           <div class="bd">
@@ -156,7 +156,7 @@
 
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? GGR (Hoje)</div>
+            <div class="lbl">GGR (Hoje)</div>
             <div class="tag">Coin-In - Coin-Out</div>
           </div>
           <div class="bd">
@@ -172,7 +172,7 @@
 
         <div class="card">
           <div class="hd">
-            <div class="lbl">?? RTP Real (Hoje)</div>
+            <div class="lbl">RTP Real (Hoje)</div>
             <div class="tag">risco</div>
           </div>
           <div class="bd">
@@ -191,7 +191,7 @@
       <section class="grid row2" style="margin-top:14px;">
         <div class="card chart">
           <div class="title">
-            <h3>?? Coin-In (Últimas 24h)</h3>
+            <h3>Coin-In (Últimas 24h)</h3>
             <span>tendência por hora</span>
           </div>
           <div class="chartbox">
@@ -201,7 +201,7 @@
 
         <div class="card chart">
           <div class="title">
-            <h3>?? Top Jogos (share de Coin-In)</h3>
+            <h3>Top Jogos (share de Coin-In)</h3>
             <span>Últimas 24h</span>
           </div>
           <div class="chartbox">
@@ -213,7 +213,7 @@
       <section class="grid row3" style="margin-top:14px;">
         <div class="card chart">
           <div class="title">
-            <h3>?? Jogadores Online (Últimas 24h)</h3>
+            <h3>Jogadores Online (Últimas 24h)</h3>
             <span>concurrency</span>
           </div>
           <div class="chartbox">
@@ -223,7 +223,7 @@
 
         <div class="card chart">
           <div class="title">
-            <h3>?? Coin-In por Operadora</h3>
+            <h3>Coin-In por Operadora</h3>
             <span>comparativo (24h)</span>
           </div>
           <div class="chartbox">
@@ -236,7 +236,7 @@
       <section class="grid row4" style="margin-top:14px;">
         <div class="card chart">
           <div class="title">
-            <h3>?? Últimos Jackpots</h3>
+            <h3>Últimos Jackpots</h3>
             <span>pagamentos recentes</span>
           </div>
 
@@ -296,7 +296,7 @@
       <!-- Alerts -->
       <section class="card alerts" style="margin-top:14px;">
         <div class="title" style="margin: 4px 0 12px;">
-          <h3>?? Alertas & Anomalias</h3>
+          <h3>Alertas & Anomalias</h3>
           <span>o que precisa de Atenção agora</span>
         </div>
 
@@ -512,7 +512,7 @@
       if (window.innerWidth <= 860) return;
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       document.body.classList.add("sidebar-open");
-      if (sidebarReveal) sidebarReveal.textContent = "?";
+      if (sidebarReveal) sidebarReveal.textContent = "≡";
     }
 
     function closeSidebarDelayed() {
@@ -520,7 +520,7 @@
       if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
       sidebarCloseTimer = setTimeout(() => {
         document.body.classList.remove("sidebar-open");
-        if (sidebarReveal) sidebarReveal.textContent = "?";
+        if (sidebarReveal) sidebarReveal.textContent = "≡";
       }, 120);
     }
 
@@ -539,7 +539,7 @@
       window.addEventListener("resize", () => {
         if (window.innerWidth <= 860) {
           document.body.classList.remove("sidebar-open");
-          sidebarReveal.textContent = "?";
+          sidebarReveal.textContent = "≡";
         }
       });
     }
@@ -1113,6 +1113,8 @@
     updateGamesBadge();</script>
 </body>
 </html>
+
+
 
 
 
