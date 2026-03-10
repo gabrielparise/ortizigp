@@ -220,11 +220,141 @@
     .game-meta-grid div{padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background: rgba(255,255,255,.04)}
     .game-meta-grid span{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
     .game-meta-grid strong{font-size:14px;font-weight:600}
-    .game-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .game-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .game-actions .action-btn{
+      position:relative;
+      overflow:hidden;
+      min-height:42px;
+      padding:10px 16px;
+      border-radius:14px;
+      font-weight:600;
+      letter-spacing:.01em;
+      transition:transform .18s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+    }
+    .game-actions .action-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 20px rgba(8,13,29,.35);
+    }
+    .game-actions .action-btn:active{transform:translateY(0)}
+    .game-actions .action-btn:focus-visible{
+      outline:2px solid rgba(246,201,107,.75);
+      outline-offset:2px;
+    }
+    .game-actions .action-overview{
+      border-color:rgba(122,92,255,.42);
+      background:linear-gradient(140deg, rgba(122,92,255,.24), rgba(122,92,255,.12));
+    }
+    .game-actions .action-demo{
+      border-color:rgba(46,229,157,.38);
+      background:linear-gradient(140deg, rgba(46,229,157,.16), rgba(46,229,157,.07));
+    }
+    .game-actions .action-download{
+      border-color:rgba(246,201,107,.45);
+      background:linear-gradient(130deg, rgba(246,201,107,.33), rgba(122,92,255,.30));
+      box-shadow:0 8px 18px rgba(246,201,107,.20);
+    }
+
+    body.light-theme .game-actions .action-btn{
+      box-shadow:none;
+    }
+    body.light-theme .game-actions .action-overview{
+      border-color:rgba(82,60,188,.34);
+      background:linear-gradient(140deg, rgba(122,92,255,.16), rgba(122,92,255,.09));
+    }
+    body.light-theme .game-actions .action-demo{
+      border-color:rgba(27,148,99,.34);
+      background:linear-gradient(140deg, rgba(46,229,157,.18), rgba(46,229,157,.08));
+    }
+    body.light-theme .game-actions .action-download{
+      border-color:rgba(185,136,23,.4);
+      background:linear-gradient(130deg, rgba(246,201,107,.30), rgba(122,92,255,.20));
+    }
+    body.light-theme .game-detail-card{
+      background: linear-gradient(180deg, #ffffff, #f4f8ff);
+      border-color: rgba(15,23,42,.22);
+    }
+    body.light-theme .game-meta-grid div{
+      border-color: rgba(15,23,42,.24);
+      background: #ffffff;
+      box-shadow: 0 3px 10px rgba(15,23,42,.07);
+    }
+    body.light-theme .game-meta-grid span{
+      color: rgba(11,21,48,.82);
+    }
+    body.light-theme .game-meta-grid strong{
+      color: #0b1530;
+    }
 
     .list-card{padding:14px}
     .list-card h4{margin:0 0 10px;font-size:16px}
     .list-card ul{margin:0;padding-left:18px;color:var(--muted);display:grid;gap:6px;font-size:13px}
+
+    .asset-form-card{padding:18px}
+    .asset-form{
+      display:grid;
+      gap:14px;
+    }
+    .form-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:12px;
+    }
+    .field{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .field.full{grid-column:1 / -1}
+    .field label{
+      font-size:12px;
+      color:var(--muted);
+      font-family:var(--font-mono);
+    }
+    .textarea,
+    .file-input{
+      width:100%;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:12px;
+      outline:none;
+      font-size:13px;
+      font-family:var(--font-ui);
+    }
+    .textarea{
+      min-height:110px;
+      resize:vertical;
+    }
+    .upload-box{
+      border:1px dashed rgba(255,255,255,.24);
+      border-radius:12px;
+      padding:12px;
+      background: rgba(255,255,255,.02);
+      display:grid;
+      gap:8px;
+    }
+    .upload-box small{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .form-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:2px;
+    }
+
+    body.light-theme .textarea,
+    body.light-theme .file-input{
+      border-color: rgba(15,23,42,.22);
+      background:#ffffff;
+      color:#0b1530;
+    }
+    body.light-theme .upload-box{
+      border-color: rgba(15,23,42,.28);
+      background: rgba(255,255,255,.86);
+    }
 
     .kpi-grid{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:12px}
     .kpi-card{padding:14px;display:flex;flex-direction:column;gap:6px}
@@ -249,6 +379,7 @@
       .panel-grid{grid-template-columns:1fr}
       .game-detail-card{grid-template-columns:1fr}
       .game-meta-grid{grid-template-columns:repeat(2, minmax(0,1fr))}
+      .form-grid{grid-template-columns:1fr}
     }
     @media (max-width:860px){
       .app{grid-template-columns:1fr}

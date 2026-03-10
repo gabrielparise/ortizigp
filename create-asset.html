@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="assets.css" />
+  <title>iGP Backoffice - Criar Asset</title>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>iGP Backoffice</h1>
+          <p>Visão Operação + Cliente</p>
+        </div>
+      </div>
+      <nav class="nav">
+        <a href="index.html"><span>Dashboard</span><span class="badge">Home</span></a>
+        <a href="players.html"><span>Players</span><span class="badge">1.2k</span></a>
+        <a href="games.html"><span>Games</span><span class="badge" data-games-count>26</span></a>
+        <a class="active" href="assets.html"><span>Assets</span><span class="badge">Marketing</span></a>
+        <a href="#"><span>Transactions</span><span class="badge">Live</span></a>
+        <a href="jackpots.html"><span>Jackpots</span><span class="badge">5</span></a>
+        <a href="bonus-promos.html"><span>Bônus & Promos</span><span class="badge">New</span></a>
+        <a href="#"><span>Integrators</span><span class="badge">12</span></a>
+        <a href="operators.html"><span>Operators</span><span class="badge">6</span></a>
+        <a href="reports.html"><span>Reports</span><span class="badge">PDF</span></a>
+        <a href="#"><span>Fraud / Risk</span><span class="badge">3</span></a>
+        <a href="settings.html"><span>Settings</span><span class="badge">Config</span></a>
+      </nav>
+    </aside>
+    <button id="sidebarReveal" class="sidebar-reveal" aria-label="Mostrar menu" title="Mostrar menu">≡</button>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h2>Criar Novo Asset</h2>
+        </div>
+        <div class="actions">
+          <a class="btn" href="assets.html">Voltar para Assets</a>
+          <button class="btn theme-toggle" id="btnThemeToggle" aria-label="Ativar tema claro" title="Ativar tema claro">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          </button>
+        </div>
+      </div>
+
+      <section class="section">
+        <article class="card asset-form-card">
+          <form id="createAssetForm" class="asset-form">
+            <div class="form-grid">
+              <div class="field">
+                <label for="gameName">Nome do jogo</label>
+                <input id="gameName" class="input" type="text" placeholder="Ex.: Mega Bingo Deluxe" required />
+              </div>
+              <div class="field">
+                <label for="gameTag">Tag de destaque</label>
+                <input id="gameTag" class="input" type="text" placeholder="Ex.: Top CTR" />
+              </div>
+
+              <div class="field full">
+                <label for="gameDescription">Descrição do jogo</label>
+                <textarea id="gameDescription" class="textarea" placeholder="Descrição comercial do jogo..." required></textarea>
+              </div>
+
+              <div class="field">
+                <label for="volatility">Volatilidade</label>
+                <select id="volatility" class="select" required>
+                  <option value="">Selecione</option>
+                  <option>Baixa</option>
+                  <option>Média</option>
+                  <option>Alta</option>
+                  <option>Muito alta</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="rtp">RTP (%)</label>
+                <input id="rtp" class="input" type="number" step="0.01" min="0" max="100" placeholder="96.20" required />
+              </div>
+              <div class="field">
+                <label for="format">Formato</label>
+                <input id="format" class="input" type="text" placeholder="Ex.: 75 bolas" required />
+              </div>
+              <div class="field">
+                <label for="maxCards">Cartelas máx.</label>
+                <input id="maxCards" class="input" type="number" min="1" placeholder="12" required />
+              </div>
+              <div class="field">
+                <label for="minBet">Aposta mín. (R$)</label>
+                <input id="minBet" class="input" type="number" step="0.01" min="0" placeholder="0.50" required />
+              </div>
+              <div class="field">
+                <label for="maxBet">Aposta máx. (R$)</label>
+                <input id="maxBet" class="input" type="number" step="0.01" min="0" placeholder="120.00" required />
+              </div>
+              <div class="field">
+                <label for="defaultBet">Aposta Padrão (R$)</label>
+                <input id="defaultBet" class="input" type="number" step="0.01" min="0" placeholder="2.50" required />
+              </div>
+              <div class="field">
+                <label for="minTotalBet">Aposta Total Mínima (R$)</label>
+                <input id="minTotalBet" class="input" type="number" step="0.01" min="0" placeholder="0.50" required />
+              </div>
+              <div class="field">
+                <label for="maxTotalBet">Aposta Total Máxima (R$)</label>
+                <input id="maxTotalBet" class="input" type="number" step="0.01" min="0" placeholder="1440.00" required />
+              </div>
+              <div class="field">
+                <label for="maxExposure">Exposição Máxima (R$)</label>
+                <input id="maxExposure" class="input" type="number" step="0.01" min="0" placeholder="50000.00" required />
+              </div>
+              <div class="field">
+                <label for="releaseDate">Data de Lançamento</label>
+                <input id="releaseDate" class="input" type="date" required />
+              </div>
+              <div class="field">
+                <label for="gameId">Game ID</label>
+                <input id="gameId" class="input" type="text" placeholder="MEGABINGO_005" required />
+              </div>
+              <div class="field">
+                <label for="hasFreeGames">Possui Free Games</label>
+                <select id="hasFreeGames" class="select" required>
+                  <option value="">Selecione</option>
+                  <option>Sim</option>
+                  <option>Não</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="sizeMb">Tamanho (em megabytes)</label>
+                <input id="sizeMb" class="input" type="number" min="1" placeholder="128" required />
+              </div>
+              <div class="field">
+                <label for="jackpot">Jackpot</label>
+                <select id="jackpot" class="select" required>
+                  <option value="">Selecione</option>
+                  <option>Progressivo</option>
+                  <option>Fixo</option>
+                  <option>Sem jackpot</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="replay">Replay</label>
+                <select id="replay" class="select" required>
+                  <option value="">Selecione</option>
+                  <option>Sim</option>
+                  <option>Não</option>
+                </select>
+              </div>
+
+              <div class="field full">
+                <label for="thumbImage">Imagem do jogo (thumb)</label>
+                <input id="thumbImage" class="file-input" type="file" accept=".png,.jpg,.jpeg,.webp" />
+              </div>
+              <div class="field full">
+                <label for="marketingKit">Kit de marketing</label>
+                <div class="upload-box">
+                  <input id="marketingKit" class="file-input" type="file" accept=".zip,.pdf,.png,.jpg,.jpeg,.mp4,.psd,.ai" multiple required />
+                  <small>Envie os materiais do jogo (banners, vídeo, PDF comercial, artes e variações).</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button class="btn primary" type="submit">Salvar Asset</button>
+              <a class="btn ghost" href="assets.html">Cancelar</a>
+            </div>
+          </form>
+        </article>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const THEME_KEY = "igp-dashboard-theme-v1";
+    const CUSTOM_ASSETS_KEY = "igp-custom-assets-v1";
+    const btnThemeToggle = document.getElementById("btnThemeToggle");
+    const sidebar = document.querySelector(".sidebar");
+    const sidebarReveal = document.getElementById("sidebarReveal");
+    const createAssetForm = document.getElementById("createAssetForm");
+    let sidebarCloseTimer = null;
+    const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
+    const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
+
+    function setTheme(theme) {
+      const isLight = theme === "light";
+      document.body.classList.toggle("light-theme", isLight);
+      localStorage.setItem(THEME_KEY, isLight ? "light" : "dark");
+      btnThemeToggle.innerHTML = isLight ? SUN_ICON_SVG : MOON_ICON_SVG;
+      btnThemeToggle.setAttribute("aria-label", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+      btnThemeToggle.setAttribute("title", isLight ? "Ativar tema escuro" : "Ativar tema claro");
+    }
+
+    function initThemeToggle() {
+      setTheme(localStorage.getItem(THEME_KEY) || "dark");
+      btnThemeToggle.addEventListener("click", () => {
+        const isLight = document.body.classList.contains("light-theme");
+        setTheme(isLight ? "dark" : "light");
+      });
+    }
+
+    function openSidebar() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      document.body.classList.add("sidebar-open");
+      if (sidebarReveal) sidebarReveal.textContent = "≡";
+    }
+
+    function closeSidebarDelayed() {
+      if (window.innerWidth <= 860) return;
+      if (sidebarCloseTimer) clearTimeout(sidebarCloseTimer);
+      sidebarCloseTimer = setTimeout(() => {
+        document.body.classList.remove("sidebar-open");
+        if (sidebarReveal) sidebarReveal.textContent = "≡";
+      }, 120);
+    }
+
+    function initSidebarReveal() {
+      if (!sidebar || !sidebarReveal) return;
+      sidebarReveal.addEventListener("mouseenter", openSidebar);
+      sidebarReveal.addEventListener("focus", openSidebar);
+      sidebarReveal.addEventListener("mouseleave", closeSidebarDelayed);
+      sidebarReveal.addEventListener("blur", closeSidebarDelayed);
+      sidebarReveal.addEventListener("click", () => {
+        if (document.body.classList.contains("sidebar-open")) closeSidebarDelayed();
+        else openSidebar();
+      });
+      sidebar.addEventListener("mouseenter", openSidebar);
+      sidebar.addEventListener("mouseleave", closeSidebarDelayed);
+      window.addEventListener("resize", () => {
+        if (window.innerWidth <= 860) {
+          document.body.classList.remove("sidebar-open");
+          sidebarReveal.textContent = "≡";
+        }
+      });
+    }
+
+    function updateGamesBadge() {
+      const badges = document.querySelectorAll("[data-games-count]");
+      const count = localStorage.getItem("igp-games-count");
+      if (!count) return;
+      badges.forEach((el) => { el.textContent = count; });
+    }
+
+    function readFileAsDataUrl(file) {
+      return new Promise((resolve) => {
+        if (!file) {
+          resolve("");
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => resolve(typeof reader.result === "string" ? reader.result : "");
+        reader.onerror = () => resolve("");
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function getInputValue(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    async function handleCreateAsset(event) {
+      event.preventDefault();
+      const thumbInput = document.getElementById("thumbImage");
+      const kitInput = document.getElementById("marketingKit");
+      const thumbFile = thumbInput && thumbInput.files ? thumbInput.files[0] : null;
+      const thumbDataUrl = await readFileAsDataUrl(thumbFile);
+      const kitFiles = kitInput && kitInput.files ? Array.from(kitInput.files).map((file) => file.name) : [];
+
+      const newAsset = {
+        id: String(Date.now()),
+        name: getInputValue("gameName"),
+        tag: getInputValue("gameTag") || "Novo",
+        description: getInputValue("gameDescription"),
+        volatility: getInputValue("volatility"),
+        rtp: getInputValue("rtp"),
+        format: getInputValue("format"),
+        maxCards: getInputValue("maxCards"),
+        minBet: getInputValue("minBet"),
+        maxBet: getInputValue("maxBet"),
+        defaultBet: getInputValue("defaultBet"),
+        minTotalBet: getInputValue("minTotalBet"),
+        maxTotalBet: getInputValue("maxTotalBet"),
+        maxExposure: getInputValue("maxExposure"),
+        releaseDate: getInputValue("releaseDate"),
+        gameId: getInputValue("gameId"),
+        hasFreeGames: getInputValue("hasFreeGames"),
+        sizeMb: getInputValue("sizeMb"),
+        jackpot: getInputValue("jackpot"),
+        replay: getInputValue("replay"),
+        thumbDataUrl,
+        thumbName: thumbFile ? thumbFile.name : "",
+        marketingKitFiles: kitFiles
+      };
+
+      try {
+        const existing = JSON.parse(localStorage.getItem(CUSTOM_ASSETS_KEY) || "[]");
+        existing.push(newAsset);
+        localStorage.setItem(CUSTOM_ASSETS_KEY, JSON.stringify(existing));
+        window.location.href = "assets.html";
+      } catch (error) {
+        alert("Nao foi possivel salvar o asset. Reduza o tamanho da imagem e tente novamente.");
+      }
+    }
+
+    initSidebarReveal();
+    initThemeToggle();
+    updateGamesBadge();
+    if (createAssetForm) createAssetForm.addEventListener("submit", handleCreateAsset);
+  </script>
+</body>
+</html>
