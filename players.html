@@ -135,6 +135,52 @@
             </div>
           </article>
 
+          <article class="card registration-card" style="padding:14px;">
+            <div class="registration-head">
+              <div>
+                <h3 style="margin:0 0 4px 0;font-size:14px;">Aprovacao de cadastro</h3>
+                <p class="registration-subtitle">Cadastros que falharam na validacao automatica.</p>
+              </div>
+              <span class="status warn registration-global-status"><span class="dot"></span>Pendente</span>
+            </div>
+            <div class="registration-list">
+              <div class="registration-item" data-decision="pending">
+                <div class="registration-title">
+                  <strong>PLR-12991 / Renata Alves</strong>
+                  <span class="status warn registration-item-status"><span class="dot"></span>Pendente</span>
+                </div>
+                <div class="registration-meta">
+                  <span>Operador: Operadora A</span>
+                  <span>Tentativa: 10/03/2026 14:18</span>
+                </div>
+                <div class="registration-meta">
+                  <span>Motivo: divergencia no documento</span>
+                </div>
+                <div class="registration-actions">
+                  <button class="btn approve" data-action="approve">Aprovar cadastro</button>
+                  <button class="btn reject" data-action="reject">Recusar cadastro</button>
+                </div>
+              </div>
+              <div class="registration-item" data-decision="pending">
+                <div class="registration-title">
+                  <strong>PLR-12994 / Gustavo Melo</strong>
+                  <span class="status warn registration-item-status"><span class="dot"></span>Pendente</span>
+                </div>
+                <div class="registration-meta">
+                  <span>Operador: Operadora C</span>
+                  <span>Tentativa: 10/03/2026 15:02</span>
+                </div>
+                <div class="registration-meta">
+                  <span>Motivo: selfie nao validada</span>
+                </div>
+                <div class="registration-actions">
+                  <button class="btn approve" data-action="approve">Aprovar cadastro</button>
+                  <button class="btn reject" data-action="reject">Recusar cadastro</button>
+                </div>
+              </div>
+            </div>
+          </article>
+
           <article class="card" style="padding:14px;">
             <h3 style="margin:0 0 10px 0;font-size:14px;">Atividade recente</h3>
             <div class="activity">
@@ -164,6 +210,9 @@
     const rows = Array.from(body.querySelectorAll("tr"));
     const sidebar = document.querySelector(".sidebar");
     const sidebarReveal = document.getElementById("sidebarReveal");
+    const registrationCard = document.querySelector(".registration-card");
+    const registrationItems = Array.from(document.querySelectorAll(".registration-item"));
+    const registrationGlobalStatus = document.querySelector(".registration-global-status");
     let sidebarCloseTimer = null;
     const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
     const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
@@ -260,6 +309,48 @@
       } catch {}
     }
 
+    function setStatusChip(statusEl, tone, label) {
+      if (!statusEl) return;
+      statusEl.classList.remove("ok", "warn", "risk");
+      statusEl.classList.add(tone);
+      statusEl.innerHTML = '<span class="dot"></span>' + label;
+    }
+
+    function updateRegistrationGlobalStatus() {
+      if (!registrationGlobalStatus || !registrationItems.length) return;
+      const hasPending = registrationItems.some((item) => item.dataset.decision === "pending");
+      if (hasPending) {
+        setStatusChip(registrationGlobalStatus, "warn", "Pendente");
+        return;
+      }
+      setStatusChip(registrationGlobalStatus, "ok", "Concluido");
+    }
+
+    function decideRegistration(item, decision) {
+      if (!item || item.dataset.decision !== "pending") return;
+      item.dataset.decision = decision;
+      const itemStatus = item.querySelector(".registration-item-status");
+      const isApproved = decision === "approved";
+      setStatusChip(itemStatus, isApproved ? "ok" : "risk", isApproved ? "Aprovado" : "Recusado");
+      item.querySelectorAll("button").forEach((button) => {
+        button.disabled = true;
+      });
+      updateRegistrationGlobalStatus();
+    }
+
+    function initRegistrationActions() {
+      if (!registrationCard) return;
+      updateRegistrationGlobalStatus();
+      registrationCard.addEventListener("click", (event) => {
+        const trigger = event.target.closest("button[data-action]");
+        if (!trigger) return;
+        const item = trigger.closest(".registration-item");
+        if (!item) return;
+        const action = trigger.dataset.action;
+        decideRegistration(item, action === "approve" ? "approved" : "rejected");
+      });
+    }
+
     [profileSelect, periodSelect, clientSelect].forEach((el) => {
       el.addEventListener("change", saveGlobalFilters);
     });
@@ -290,6 +381,7 @@
     restoreGlobalFilters();
     initSidebarReveal();
     initThemeToggle();
+    initRegistrationActions();
     applyFilters();
     function updateGamesBadge() {
       const badges = document.querySelectorAll("[data-games-count]");
