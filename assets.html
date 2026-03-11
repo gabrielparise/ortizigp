@@ -198,6 +198,23 @@
     </main>
   </div>
 
+  <div class="demo-modal" id="demoModal" aria-hidden="true">
+    <div class="demo-modal-content" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
+      <div class="demo-modal-head">
+        <h3 class="demo-modal-title" id="demoModalTitle">Demo</h3>
+        <button class="demo-modal-close" id="demoModalClose" type="button" aria-label="Fechar demo">&times;</button>
+      </div>
+      <iframe
+        class="demo-iframe"
+        id="demoFrame"
+        title="Demo do jogo"
+        loading="lazy"
+        allow="autoplay; fullscreen"
+        referrerpolicy="no-referrer"
+      ></iframe>
+    </div>
+  </div>
+
   <script>
     const THEME_KEY = "igp-dashboard-theme-v1";
     const CUSTOM_ASSETS_KEY = "igp-custom-assets-v1";
@@ -205,6 +222,10 @@
     const sidebar = document.querySelector(".sidebar");
     const sidebarReveal = document.getElementById("sidebarReveal");
     const gameDetailList = document.querySelector(".game-detail-list");
+    const demoModal = document.getElementById("demoModal");
+    const demoModalClose = document.getElementById("demoModalClose");
+    const demoModalTitle = document.getElementById("demoModalTitle");
+    const demoFrame = document.getElementById("demoFrame");
     let sidebarCloseTimer = null;
     const SUN_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2"></path><path d="M12 20v2"></path><path d="m4.93 4.93 1.41 1.41"></path><path d="m17.66 17.66 1.41 1.41"></path><path d="M2 12h2"></path><path d="M20 12h2"></path><path d="m6.34 17.66-1.41 1.41"></path><path d="m19.07 4.93-1.41 1.41"></path></svg>';
     const MOON_ICON_SVG = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
@@ -344,10 +365,75 @@
       gameDetailList.insertAdjacentHTML("beforeend", customAssets.map(buildCustomAssetCard).join(""));
     }
 
+    function getCardMetaValue(cardEl, label) {
+      if (!cardEl) return "";
+      const metaItems = cardEl.querySelectorAll(".game-meta-grid div");
+      for (const item of metaItems) {
+        const span = item.querySelector("span");
+        const strong = item.querySelector("strong");
+        if (!span || !strong) continue;
+        if (span.textContent.trim() === label) return strong.textContent.trim();
+      }
+      return "";
+    }
+
+    function getDemoUrl({ name, gameId, image }) {
+      const params = new URLSearchParams();
+      params.set("name", name || "Game Demo");
+      if (gameId) params.set("id", gameId);
+      if (image) params.set("image", image);
+      return `demo-player.html?${params.toString()}`;
+    }
+
+    function openDemoModal({ name, gameId, image }) {
+      if (!demoModal || !demoFrame || !demoModalTitle) return;
+      const gameName = name || "Game Demo";
+      demoModalTitle.textContent = `Demo - ${gameName}`;
+      demoFrame.src = getDemoUrl({ name: gameName, gameId, image });
+      demoModal.classList.add("is-open");
+      demoModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeDemoModal() {
+      if (!demoModal || !demoFrame) return;
+      demoModal.classList.remove("is-open");
+      demoModal.setAttribute("aria-hidden", "true");
+      demoFrame.removeAttribute("src");
+      document.body.style.overflow = "";
+    }
+
+    function initDemoButtons() {
+      if (!gameDetailList) return;
+      gameDetailList.addEventListener("click", (event) => {
+        const demoBtn = event.target.closest(".action-demo");
+        if (!demoBtn) return;
+        const card = demoBtn.closest(".game-detail-card");
+        if (!card) return;
+        const name = card.querySelector(".game-head h4")?.textContent.trim() || "Game Demo";
+        const image = card.querySelector(".thumb img")?.getAttribute("src") || "";
+        const gameId = getCardMetaValue(card, "Game ID");
+        openDemoModal({ name, gameId, image });
+      });
+
+      if (demoModalClose) {
+        demoModalClose.addEventListener("click", closeDemoModal);
+      }
+      if (demoModal) {
+        demoModal.addEventListener("click", (event) => {
+          if (event.target === demoModal) closeDemoModal();
+        });
+      }
+      document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape" && demoModal?.classList.contains("is-open")) closeDemoModal();
+      });
+    }
+
     initSidebarReveal();
     initThemeToggle();
     updateGamesBadge();
     appendCustomAssets();
+    initDemoButtons();
   </script>
 </body>
 </html>
